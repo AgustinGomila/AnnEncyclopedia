@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Mi AnnDex Personal</title>
+    <link href="styles/main.css" rel="stylesheet">
+    <link href="styles/responsive.css" rel="stylesheet">
+    <link href="images/favicon.png" rel="icon" type="image/x-icon">
+</head>
+<body>
+<header>
+    <div class="logo">
+        <h1>Mi Universo</h1>
+        <p>Archivo de personajes y lugares</p>
+    </div>
+    <nav class="main-nav">
+        <ul>
+            <li><a data-section="characters" href="#">Personajes</a></li>
+            <li><a data-section="locations" href="#">Lugares</a></li>
+            <li><a data-section="items" href="#">Objetos</a></li>
+            <li><a data-section="about" href="#">Acerca</a></li>
+        </ul>
+    </nav>
+    <div class="search-box">
+        <input id="search-input" placeholder="Buscar personajes, lugares..." type="text">
+        <button id="search-btn">🔍</button>
+    </div>
+</header>
+
+<main>
+    <div class="sidebar">
+        <div class="filters">
+            <h3>Categorías</h3>
+            <div id="category-filters"></div>
+        </div>
+        <div class="stats">
+            <h3>Estadísticas</h3>
+            <div id="stats-display">
+                <p>Cargando datos...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="grid-container" id="content-grid">
+            <!-- Los elementos se cargarán aquí dinámicamente -->
+            <div class="loading">Cargando datos...</div>
+        </div>
+
+        <div class="detail-view" id="detail-view">
+            <!-- Vista detallada se mostrará aquí -->
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p>Creado con ❤️ | Actualizado: <span id="update-date"></span></p>
+    <p>Para agregar contenido, edita los archivos JSON en la carpeta /data</p>
+</footer>
+
+<script src="scripts/images.js"></script>
+<script src="scripts/loader.js"></script>
+<script src="scripts/navigation.js"></script>
+<script src="scripts/main.js"></script>
+</body>
+</html>

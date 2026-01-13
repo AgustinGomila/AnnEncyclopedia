@@ -1,0 +1,23 @@
+{
+  "characters": [
+    "Héroes",
+    "Guardianes",
+    "Villanos",
+    "Aliados",
+    "Místicos"
+  ],
+  "locations": [
+    "Bosques",
+    "Ciudades",
+    "Ruinas",
+    "Montañas",
+    "Cuevas"
+  ],
+  "items": [
+    "Armas",
+    "Artefactos",
+    "Pociones",
+    "Libros",
+    "Mapas"
+  ]
+}

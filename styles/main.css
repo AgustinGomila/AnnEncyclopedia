@@ -1,0 +1,446 @@
+/* Variables y reset */
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --light-color: #ecf0f1;
+    --dark-color: #2c3e50;
+    --card-bg: white;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    padding-bottom: 60px;
+}
+
+/* Header */
+header {
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    box-shadow: var(--shadow);
+}
+
+.logo h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.logo p {
+    opacity: 0.8;
+}
+
+.main-nav ul {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.main-nav a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    transition: all 0.3s;
+}
+
+.main-nav a:hover,
+.main-nav a.active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.search-box {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#search-input {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 20px;
+    width: 250px;
+}
+
+#search-btn {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+/* Layout principal */
+main {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Sidebar */
+.sidebar {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    height: fit-content;
+}
+
+.filters, .stats {
+    margin-bottom: 2rem;
+}
+
+.filters h3, .stats h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--secondary-color);
+}
+
+.category-btn {
+    display: block;
+    background: var(--light-color);
+    border: none;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: all 0.3s;
+}
+
+.category-btn:hover {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.category-btn.active {
+    background: var(--secondary-color);
+    color: white;
+}
+
+/* Grid responsive */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Contenido principal - Ajuste para pantalla completa */
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    min-height: calc(100vh - 300px);
+}
+
+/* Tarjetas en grid - Mejor manejo de imágenes */
+.card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card-image-container {
+    width: 100%;
+    height: 250px; /* Altura fija para todas las imágenes */
+    overflow: hidden;
+    position: relative;
+    background: #f5f5f5;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Esto es clave para mantener proporciones */
+    transition: transform 0.3s;
+}
+
+.card:hover .card-image {
+    transform: scale(1.05);
+}
+
+.card-content {
+    padding: 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.card-category {
+    display: inline-block;
+    background: var(--light-color);
+    padding: 0.2rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    align-self: flex-start;
+}
+
+.card-description {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    flex: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+/* Vista detallada - Mejor manejo de imágenes */
+.detail-main {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.detail-image-container {
+    flex: 0 0 300px; /* Ancho fijo para el contenedor de imagen */
+    max-width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    max-height: 500px;
+}
+
+.detail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Muestra toda la imagen sin recortar */
+    max-height: 500px;
+}
+
+.detail-info {
+    flex: 1;
+    min-width: 0; /* Importante para que el contenido no desborde */
+}
+
+.detail-info h2 {
+    color: white;
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+    word-wrap: break-word;
+}
+
+.detail-category {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.detail-description {
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    opacity: 0.9;
+    word-wrap: break-word;
+}
+
+.detail-view {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    display: none;
+}
+
+.detail-view.active {
+    display: block;
+}
+
+.detail-header {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.detail-image {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.detail-info h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.detail-category {
+    background: var(--secondary-color);
+    color: white;
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.detail-description {
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.attributes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.attribute {
+    background: var(--light-color);
+    padding: 1rem;
+    border-radius: 5px;
+}
+
+.attribute h4 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+/* Tarjetas relacionadas */
+.related-card {
+    background: var(--light-color);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.related-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.related-card-image {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    background: #f5f5f5;
+}
+
+.related-card-name {
+    padding: 0.5rem;
+    font-weight: 500;
+    color: var(--dark-color);
+    font-size: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Footer */
+footer {
+    background: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+footer p {
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    grid-column: 1 / -1;
+    color: #666;
+}
+
+/* Estilos para imágenes verticales */
+.vertical-image {
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+}
+
+.vertical-image .card-image {
+    object-fit: contain !important;
+    max-height: 90%;
+    max-width: 90%;
+}
+
+/* Estilos para imágenes horizontales */
+.horizontal-image .card-image {
+    object-position: center 30%; /* Enfoca en la parte superior para retratos */
+}
+
+/* Placeholder mejorado */
+.card-image-container:empty::before,
+.detail-image-container:empty::before {
+    content: "🖼️";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    color: #ccc;
+}
+
+/* Indicador de carga de imagen */
+.card-image.loading,
+.detail-image.loading {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.card-image.loaded,
+.detail-image.loaded {
+    opacity: 1;
+}
+
+/* Contenedor de imagen con sombra para mejor contraste */
+.detail-image-container {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}

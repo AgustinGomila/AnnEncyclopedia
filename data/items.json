@@ -1,0 +1,77 @@
+[
+  {
+    "id": 1,
+    "name": "Amuleto de Luz",
+    "category": "Artefactos",
+    "image": "images/items/amuleto.jpg",
+    "description": "Un amuleto que emite una luz suave y protege a su portador de la oscuridad. La luz cambia de color según el peligro.",
+    "history": "Creado por los primeros guardianes del bosque usando fragmentos de estrellas caídas.",
+    "poder": "Protección contra criaturas de sombra",
+    "relatedCharacters": [
+      1
+    ],
+    "relatedLocations": [
+      1
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Arco Ancestral",
+    "category": "Armas",
+    "image": "images/items/arco.jpg",
+    "description": "Un arco tallado en madera del primer árbol del Bosque Eterno. Nunca se rompe y sus flechas encuentran siempre el camino.",
+    "history": "Tallado por el primer espíritu del bosque como regalo para los protectores de la naturaleza.",
+    "poder": "Flechas de energía pura",
+    "relatedCharacters": [
+      1
+    ],
+    "relatedLocations": [
+      1
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Martillo de Cristal",
+    "category": "Armas",
+    "image": "images/items/martillo.jpg",
+    "description": "Un martillo forjado en cristal puro que puede cambiar de forma según la voluntad de su portador.",
+    "history": "Forjado en el corazón de las Ruinas Antiguas usando técnicas olvidadas.",
+    "poder": "Manipulación de minerales",
+    "relatedCharacters": [
+      2
+    ],
+    "relatedLocations": [
+      2
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Mapa Estelar",
+    "category": "Artefactos",
+    "image": "images/items/mapa.jpg",
+    "description": "Un mapa que muestra no solo lugares físicos, sino también dimensiones alternativas y caminos ocultos.",
+    "history": "Creado por astrónomos antiguos que podían ver más allá del velo de la realidad.",
+    "poder": "Navegación interdimensional",
+    "relatedCharacters": [
+      1
+    ],
+    "relatedLocations": [
+      1
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Libro de los Nombres",
+    "category": "Artefactos",
+    "image": "images/items/libro.jpg",
+    "description": "Un libro que contiene el nombre verdadero de todas las cosas. Quien conoce el nombre verdadero tiene poder sobre la cosa nombrada.",
+    "history": "Escrito por los primeros lingüistas que descubrieron que el lenguaje crea la realidad.",
+    "poder": "Control a través del nombramiento",
+    "relatedCharacters": [
+      3
+    ],
+    "relatedLocations": [
+      3
+    ]
+  }
+]
