@@ -1,48 +1,59 @@
-// Inicialización principal
-document.addEventListener('DOMContentLoaded', () => {
-    // Inicializar la navegación (ya se hace en navigation.js)
-    console.log('Pokédex Personal cargado');
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('🚀 AnnDex iniciando...');
 
-    // Actualizar fecha
-    const updateDate = document.getElementById('update-date');
-    if (updateDate) {
-        updateDate.textContent = new Date().toLocaleDateString('es-ES', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
+    if (typeof dataLoader === 'undefined') {
+        console.error('❌ CRÍTICO: dataLoader no está definido');
+        return;
+    }
+
+    const success = await dataLoader.loadAllData();
+    if (!success) {
+        console.error('❌ Error al cargar datos');
+        return;
+    }
+    console.log('✅ Datos cargados');
+
+    dataLoader.updateStats();
+
+    // Crear navegación ANTES de configurar búsqueda
+    window.navigation = new NavigationManager();
+
+    navigation.switchSection('characters');
+
+    // Service Worker
+    if ('serviceWorker' in navigator) {
+        try {
+            await navigator.serviceWorker.register('/sw.js');
+            console.log('✅ Service Worker registrado');
+        } catch (err) {
+            console.log('⚠️ Modo online:', err.message);
+        }
+    }
+
+    // Fecha
+    const updateDateEl = document.getElementById('update-date');
+    if (updateDateEl) {
+        updateDateEl.textContent = new Date().toLocaleDateString('es-ES', {
+            year: 'numeric', month: 'long', day: 'numeric'
         });
     }
 
-    // Configurar búsqueda con debounce
-    let searchTimeout;
+    // BÚSQUEDA: Configurar solo después de que navigation existe
     const searchInput = document.getElementById('search-input');
     if (searchInput) {
+        let timeout;
         searchInput.addEventListener('input', (e) => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
                 const query = e.target.value.trim();
-                if (query.length >= 2) {
+                if (query.length >= 2 && window.navigation) {
                     navigation.performSearch();
-                } else if (query.length === 0 && navigation) {
+                } else if (query.length === 0 && window.navigation) {
                     navigation.loadSectionContent(navigation.currentSection);
                 }
             }, 300);
         });
     }
 
-    // Optimizar imágenes después de que se cargue el contenido
-    setTimeout(() => {
-        ImageOptimizer.optimizeCardImages();
-
-        // Observar cambios en el DOM para optimizar nuevas imágenes
-        const observer = new MutationObserver(() => {
-            ImageOptimizer.optimizeCardImages();
-            ImageOptimizer.optimizeDetailImages();
-        });
-
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-    }, 1000);
+    console.log('🎉 AnnDex completamente cargado y listo');
 });

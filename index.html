@@ -6,7 +6,7 @@
     <title>Mi AnnDex Personal</title>
     <link href="styles/main.css" rel="stylesheet">
     <link href="styles/responsive.css" rel="stylesheet">
-    <link href="images/favicon.png" rel="icon" type="image/x-icon">
+    <link href="images/favicon.ico" rel="icon">
 </head>
 <body>
 <header>
@@ -14,7 +14,7 @@
         <h1>Mi Universo</h1>
         <p>Archivo de personajes y lugares</p>
     </div>
-    <nav class="main-nav">
+    <nav aria-label="Navegación principal" class="main-nav">
         <ul>
             <li><a data-section="characters" href="#">Personajes</a></li>
             <li><a data-section="locations" href="#">Lugares</a></li>
@@ -22,9 +22,9 @@
             <li><a data-section="about" href="#">Acerca</a></li>
         </ul>
     </nav>
-    <div class="search-box">
-        <input id="search-input" placeholder="Buscar personajes, lugares..." type="text">
-        <button id="search-btn">🔍</button>
+    <div class="search-box" role="search">
+        <input aria-label="Campo de búsqueda" id="search-input" placeholder="Buscar personajes, lugares..." type="text">
+        <button aria-label="Ejecutar búsqueda" id="search-btn">🔍</button>
     </div>
 </header>
 
@@ -32,11 +32,11 @@
     <div class="sidebar">
         <div class="filters">
             <h3>Categorías</h3>
-            <div id="category-filters"></div>
+            <div aria-label="Filtros por categoría" id="category-filters" role="group"></div>
         </div>
         <div class="stats">
             <h3>Estadísticas</h3>
-            <div id="stats-display">
+            <div aria-live="polite" id="stats-display">
                 <p>Cargando datos...</p>
             </div>
         </div>
@@ -44,11 +44,12 @@
 
     <div class="content">
         <div class="grid-container" id="content-grid">
-            <!-- Los elementos se cargarán aquí dinámicamente -->
-            <div class="loading">Cargando datos...</div>
+            <div aria-live="polite" class="loading" role="status">
+                <p>Cargando datos...</p>
+            </div>
         </div>
 
-        <div class="detail-view" id="detail-view">
+        <div aria-label="Vista detallada" class="detail-view" id="detail-view" role="article">
             <!-- Vista detallada se mostrará aquí -->
         </div>
     </div>
@@ -59,6 +60,13 @@
     <p>Para agregar contenido, edita los archivos JSON en la carpeta /data</p>
 </footer>
 
+<!--
+  CADA SCRIPT DEBE CARGAR ANTES DEL SIGUIENTE
+  1. images.js → define ImageOptimizer
+  2. loader.js → define dataLoader (instancia global)
+  3. navigation.js → define NavigationManager
+  4. main.js → usa dataLoader y NavigationManager
+-->
 <script src="scripts/images.js"></script>
 <script src="scripts/loader.js"></script>
 <script src="scripts/navigation.js"></script>

@@ -3,421 +3,174 @@ class NavigationManager {
         this.currentSection = 'characters';
         this.currentCategory = 'all';
         this.currentDetail = null;
+        this.pendingTimeouts = new Set();
+        this.historyStack = []; // Para navegación hacia atrás en detalles
         this.init();
     }
 
     init() {
+        // DELEGACIÓN CENTRALIZADA: Un listener por contenedor estático
+        this.setupDelegatedListeners();
+        // Listeners para elementos permanentes (navegación, búsqueda)
+        this.setupStaticListeners();
+    }
+
+    // LISTENERS DELEGADOS
+    setupDelegatedListeners() {
+        // Tarjetas DEL GRID
+        document.getElementById('content-grid')?.addEventListener('click', (e) => {
+            const card = e.target.closest('.card[data-id]');
+            if (card) {
+                const id = parseInt(card.dataset.id);
+                const type = card.dataset.type;
+                this.showDetail(id, type);
+            }
+        });
+
+        // Tarjetas RELACIONADAS EN DETALLE
+        document.getElementById('detail-view')?.addEventListener('click', (e) => {
+            const relatedCard = e.target.closest('.related-card[data-id]');
+            if (relatedCard) {
+                e.preventDefault();
+                const id = parseInt(relatedCard.dataset.id);
+                const type = relatedCard.dataset.type;
+
+                // Guardar el detalle actual en el historial
+                if (this.currentDetail) {
+                    this.historyStack.push({...this.currentDetail});
+                }
+
+                this.showDetail(id, type);
+            }
+
+            // Botón cerrar
+            const closeBtn = e.target.closest('.close-detail');
+            if (closeBtn) {
+                this.closeDetailView();
+            }
+
+            // Botón volver atrás (si existe)
+            const backBtn = e.target.closest('.back-detail');
+            if (backBtn && this.historyStack.length > 0) {
+                const previous = this.historyStack.pop();
+                this.showDetail(previous.id, previous.type, true); // true = no guardar en historial
+            }
+        });
+
+        // FILTROS
+        document.getElementById('category-filters')?.addEventListener('click', (e) => {
+            const btn = e.target.closest('.category-btn[data-category]');
+            if (!btn) return;
+
+            // Actualizar estado visual
+            btn.parentElement.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            this.currentCategory = btn.dataset.category;
+            this.loadSectionContent(this.currentSection);
+        });
+
+        // Botón cerrar en vista de detalle
+        document.getElementById('detail-view')?.addEventListener('click', (e) => {
+            if (e.target.closest('.close-detail')) {
+                this.closeDetailView();
+            }
+        });
+    }
+
+    // LISTENERS ESTÁTICOS
+    setupStaticListeners() {
         // Navegación principal
-        document.querySelectorAll('.main-nav a').forEach(link => {
+        document.querySelectorAll('.main-nav a[data-section]').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const section = e.target.dataset.section;
-                if (section) {
-                    this.switchSection(section);
-                }
+                if (section) this.switchSection(section);
             });
         });
 
-        // Botón de búsqueda
+        // Búsqueda
         const searchBtn = document.getElementById('search-btn');
         if (searchBtn) {
-            searchBtn.addEventListener('click', () => {
-                this.performSearch();
-            });
+            searchBtn.addEventListener('click', () => this.performSearch());
         }
 
         const searchInput = document.getElementById('search-input');
         if (searchInput) {
             searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    this.performSearch();
-                }
+                if (e.key === 'Enter') this.performSearch();
             });
         }
     }
 
-    switchSection(section) {
-        if (!section) return;
+    // GESTIÓN DE TIMERS
+    setSafeTimeout(callback, delay) {
+        const id = setTimeout(() => {
+            this.pendingTimeouts.delete(id);
+            callback();
+        }, delay);
+        this.pendingTimeouts.add(id);
+        return id;
+    }
 
-        this.currentSection = section;
-        this.currentCategory = 'all';
+    clearAllTimeouts() {
+        this.pendingTimeouts.forEach(id => clearTimeout(id));
+        this.pendingTimeouts.clear();
+    }
 
-        // Actualizar navegación activa
-        document.querySelectorAll('.main-nav a').forEach(link => {
-            link.classList.remove('active');
-            if (link.dataset.section === section) {
-                link.classList.add('active');
-            }
-        });
-
-        // Si es la sección "about", mostrar contenido estático
-        if (section === 'about') {
-            this.showAboutSection();
+    // MÉTODOS PRINCIPALES
+    performSearch() {
+        const query = document.getElementById('search-input')?.value || '';
+        if (!query.trim()) {
+            this.loadSectionContent(this.currentSection);
             return;
         }
 
-        // Cargar categorías para esta sección
-        this.loadCategoryFilters(section);
-
-        // Cargar contenido
-        this.loadSectionContent(section);
-
-        // Cerrar vista detallada si está abierta
-        this.closeDetailView();
-    }
-
-    async loadCategoryFilters(section) {
-        const container = document.getElementById('category-filters');
-        if (!container || !dataLoader.isValidType(section)) return;
-
-        // Asegurarnos de que los datos están cargados
-        await dataLoader.loadAllData();
-
-        if (!dataLoader.data[section] || dataLoader.data[section].length === 0) {
-            container.innerHTML = '<p>No hay datos disponibles</p>';
-            return;
-        }
-
-        const categories = dataLoader.getAllCategories(section);
-
-        container.innerHTML = `
-            <button class="category-btn active" data-category="all">
-                Todos (${dataLoader.data[section].length})
-            </button>
-        `;
-
-        if (categories && categories.length > 0) {
-            categories.forEach(category => {
-                const count = dataLoader.filterByCategory(section, category).length;
-                const button = document.createElement('button');
-                button.className = 'category-btn';
-                button.textContent = `${category} (${count})`;
-                button.dataset.category = category;
-                button.addEventListener('click', (e) => {
-                    container.querySelectorAll('.category-btn').forEach(b => {
-                        b.classList.remove('active');
-                    });
-                    button.classList.add('active');
-                    this.currentCategory = button.dataset.category;
-                    this.loadSectionContent(section);
-                });
-                container.appendChild(button);
-            });
-        }
-
-        // Event listener para el botón "Todos"
-        const allBtn = container.querySelector('.category-btn');
-        if (allBtn) {
-            allBtn.addEventListener('click', (e) => {
-                container.querySelectorAll('.category-btn').forEach(b => {
-                    b.classList.remove('active');
-                });
-                allBtn.classList.add('active');
-                this.currentCategory = 'all';
-                this.loadSectionContent(section);
-            });
-        }
-    }
-
-    loadSectionContent(section) {
-        // Verificar si es una sección válida
-        if (!dataLoader.isValidType(section)) {
-            this.showNoContentMessage();
-            return;
-        }
-
-        let items = dataLoader.data[section] || [];
-
-        // Filtrar por categoría si no es "all"
-        if (this.currentCategory !== 'all') {
-            items = items.filter(item => item && item.category === this.currentCategory);
-        }
-
-        // Renderizar en grid
-        this.renderGrid(items, section);
-    }
-
-    renderGrid(items, type) {
-        const grid = document.getElementById('content-grid');
-        if (!grid) return;
-
-        if (!items || items.length === 0) {
-            grid.innerHTML = '<div class="no-results">No se encontraron elementos</div>';
-            return;
-        }
-
-        // Filtrar items nulos
-        const validItems = items.filter(item => item);
-
-        grid.innerHTML = validItems.map(item => this.createCard(item, type)).join('');
-
-        // Añadir event listeners a las tarjetas - ¡ESTE ERA EL ERROR!
-        grid.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('click', () => {
-                const id = parseInt(card.dataset.id);
-                const cardType = card.dataset.type;
-                this.showDetail(id, cardType);
-            });
-        });
-    }
-
-    createCard(item, type) {
-        if (!item) return '';
-
-        const imageUrl = item.image || 'images/placeholder.jpg';
-        const name = item.name || 'Sin nombre';
-        const category = item.category || 'Sin categoría';
-        const description = item.shortDescription ||
-            (item.description ? item.description.substring(0, 100) + '...' : 'Sin descripción');
-
-        return `
-        <div class="card" data-id="${item.id}" data-type="${type}">
-            <div class="card-image-container">
-                <img src="${imageUrl}" 
-                     alt="${name}" 
-                     class="card-image"
-                     onerror="this.src='images/placeholder.jpg'">
-            </div>
-            <div class="card-content">
-                <span class="card-category">${category}</span>
-                <h3>${name}</h3>
-                <p class="card-description">${description}</p>
-            </div>
-        </div>
-    `;
-    }
-
-    showDetail(id, type) {
-        const detailView = document.getElementById('detail-view');
-        if (!detailView) return;
-
-        let item;
-        switch (type) {
-            case 'characters':
-                item = dataLoader.getCharacter(id);
-                break;
-            case 'locations':
-                item = dataLoader.getLocation(id);
-                break;
-            case 'items':
-                item = dataLoader.getItem(id);
-                break;
-            default:
-                return;
-        }
-
-        if (!item) return;
-
-        this.currentDetail = {id, type};
-
-        // Obtener elementos relacionados
-        let relatedInfo = this.getRelatedInfo(item, type);
-
-        detailView.innerHTML = this.createDetailView(item, type, relatedInfo);
-        detailView.classList.add('active');
-
-        // Añadir event listener para cerrar
-        const closeBtn = detailView.querySelector('.close-detail');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => this.closeDetailView());
-        }
-
-        // Scroll a la vista detallada
-        detailView.scrollIntoView({behavior: 'smooth'});
-    }
-
-    getRelatedInfo(item, type) {
-        let relatedInfo = {
-            characters: [],
-            locations: [],
-            items: []
-        };
-
-        switch (type) {
-            case 'characters':
-                // Personajes relacionados
-                if (item.relatedCharacters) {
-                    relatedInfo.characters = item.relatedCharacters
-                        .map(id => dataLoader.getCharacter(id))
-                        .filter(Boolean);
-                }
-                // Lugares relacionados
-                if (item.relatedLocations) {
-                    relatedInfo.locations = item.relatedLocations
-                        .map(id => dataLoader.getLocation(id))
-                        .filter(Boolean);
-                }
-                // Items relacionados
-                if (item.relatedItems) {
-                    relatedInfo.items = item.relatedItems
-                        .map(id => dataLoader.getItem(id))
-                        .filter(Boolean);
-                }
-                break;
-
-            case 'locations':
-                // Personajes en este lugar
-                relatedInfo.characters = dataLoader.getCharactersByLocation(item.id);
-                // Items en este lugar
-                relatedInfo.items = dataLoader.getItemsByLocation(item.id);
-                break;
-
-            case 'items':
-                // Personajes relacionados con este item
-                relatedInfo.characters = dataLoader.getCharactersByItem(item.id);
-                // Lugares relacionados con este item
-                relatedInfo.locations = dataLoader.getLocationsByItem(item.id);
-                break;
-        }
-
-        return relatedInfo;
-    }
-
-    createDetailView(item, type, relatedInfo) {
-        if (!item) return '';
-
-        const imageUrl = item.image || 'images/placeholder.jpg';
-        const name = item.name || 'Sin nombre';
-        const category = item.category || 'Sin categoría';
-        const description = item.description || 'Sin descripción';
-        const history = item.history || '';
-
-        // Generar estadísticas si existen
-        let statsHTML = '';
-        if (item.stats && Object.keys(item.stats).length > 0) {
-            statsHTML = `
-            <div class="attributes">
-                ${Object.entries(item.stats).map(([key, value]) => `
-                    <div class="attribute">
-                        <h4>${this.formatKey(key)}</h4>
-                        <p>${value || 'N/A'}</p>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-        }
-
-        // Generar secciones de relaciones
-        let relatedSections = '';
-        const sections = [
-            {
-                title: 'Personajes Relacionados',
-                items: relatedInfo.characters,
-                type: 'characters',
-                show: relatedInfo.characters.length > 0 && type !== 'characters'
-            },
-            {
-                title: 'Lugares Relacionados',
-                items: relatedInfo.locations,
-                type: 'locations',
-                show: relatedInfo.locations.length > 0 && type !== 'locations'
-            },
-            {
-                title: 'Objetos Relacionados',
-                items: relatedInfo.items,
-                type: 'items',
-                show: relatedInfo.items.length > 0 && type !== 'items'
-            }
+        const results = dataLoader.search(query);
+        const allResults = [
+            ...results.characters.map(c => ({...c, type: 'characters'})),
+            ...results.locations.map(l => ({...l, type: 'locations'})),
+            ...results.items.map(i => ({...i, type: 'items'}))
         ];
 
-        sections.forEach(section => {
-            if (section.show) {
-                relatedSections += `
-                <div class="related-section">
-                    <h3>${section.title}</h3>
-                    <div class="related-grid">
-                        ${section.items.map(relItem => this.createRelatedCard(relItem, section.type)).join('')}
-                    </div>
-                </div>
-            `;
-            }
-        });
-
-        // Historia
-        let historyHTML = '';
-        if (history) {
-            historyHTML = `
-            <div class="history-section">
-                <h3>Historia</h3>
-                <div class="history-content">${history}</div>
-            </div>
-        `;
-        }
-
-        return `
-        <div class="detail-header">
-            <button class="close-detail">×</button>
-            <div class="detail-main">
-                <div class="detail-image-container">
-                    <img src="${imageUrl}" alt="${name}" class="detail-image"
-                         onerror="this.src='images/placeholder.jpg'">
-                </div>
-                <div class="detail-info">
-                    <span class="detail-category">${category}</span>
-                    <h2>${name}</h2>
-                    <div class="detail-description">${description}</div>
-                    ${statsHTML}
-                </div>
-            </div>
-        </div>
-        ${relatedSections}
-        ${historyHTML}
-    `;
-    }
-
-    createRelatedCard(item, type) {
-        if (!item) return '';
-
-        const imageUrl = item.image || 'images/placeholder.jpg';
-        const name = item.name || 'Sin nombre';
-
-        return `
-        <div class="related-card" data-id="${item.id}" data-type="${type}">
-            <img src="${imageUrl}" alt="${name}" class="related-card-image"
-                 onerror="this.src='images/placeholder.jpg'">
-            <div class="related-card-name">${name}</div>
-        </div>
-    `;
-    }
-
-    closeDetailView() {
-        const detailView = document.getElementById('detail-view');
-        if (detailView) {
-            detailView.classList.remove('active');
-            this.currentDetail = null;
-        }
-    }
-
-    showNoContentMessage() {
-        const grid = document.getElementById('content-grid');
-        if (grid) {
-            grid.innerHTML = `
-                <div class="no-content" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
-                    <h3>No hay contenido disponible</h3>
-                    <p>Agrega elementos editando los archivos JSON en la carpeta /data</p>
-                </div>
-            `;
-        }
-    }
-
-    showAboutSection() {
         const grid = document.getElementById('content-grid');
         if (!grid) return;
 
+        grid.innerHTML = allResults.length
+            ? `<div class="search-header"><h3>Resultados para: "${query}" (${allResults.length})</h3></div>
+               ${allResults.map(item => this.createCard(item, item.type)).join('')}`
+            : `<div class="no-results">No se encontró "${query}"</div>`;
+
+        this.clearAllTimeouts();
+        this.setSafeTimeout(() => ImageOptimizer.optimizeCardImages(), 50);
+    }
+
+    // Sección About
+    showAboutSection() {
+        const grid = document.getElementById('content-grid');
+        const categoryFilters = document.getElementById('category-filters');
+
+        if (!grid) return;
+
+        // Limpiar filtros
+        if (categoryFilters) {
+            categoryFilters.innerHTML = '<p style="color:#999;">No hay filtros para esta sección</p>';
+        }
+
+        // Mostrar contenido estático
         grid.innerHTML = `
-            <div class="about-content" style="grid-column: 1 / -1; padding: 2rem;">
-                <h2>Acerca de este proyecto</h2>
-                <p>Este es un archivo personal para organizar y mostrar personajes, lugares e historias de tu universo creativo.</p>
+            <div class="about-content" style="grid-column: 1 / -1; padding: 2rem; background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">📚 Acerca de este proyecto</h2>
+                <p style="margin-bottom: 1.5rem; line-height: 1.6;">Este es un archivo personal para organizar y mostrar personajes, lugares e historias de tu universo creativo.</p>
                 
-                <h3>¿Cómo agregar contenido?</h3>
-                <ol>
-                    <li>Edita los archivos JSON en la carpeta /data</li>
-                    <li>Agrega imágenes a las carpetas correspondientes en /images/</li>
+                <h3 style="color: var(--secondary-color); margin-top: 2rem;">¿Cómo agregar contenido?</h3>
+                <ol style="margin-left: 1.5rem; line-height: 2;">
+                    <li>Edita los archivos JSON en la carpeta <code style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">/data</code></li>
+                    <li>Agrega imágenes a las carpetas correspondientes en <code style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">/images/</code></li>
                     <li>Actualiza las referencias en los archivos JSON</li>
                 </ol>
                 
-                <h3>Estructura de datos</h3>
-                <ul>
+                <h3 style="color: var(--secondary-color); margin-top: 2rem;">Estructura de datos</h3>
+                <ul style="margin-left: 1.5rem; line-height: 2;">
                     <li><strong>characters.json</strong>: Personajes con sus historias y estadísticas</li>
                     <li><strong>locations.json</strong>: Lugares del universo</li>
                     <li><strong>items.json</strong>: Objetos y artefactos</li>
@@ -426,71 +179,243 @@ class NavigationManager {
             </div>
         `;
 
-        const categoryFilters = document.getElementById('category-filters');
-        if (categoryFilters) {
-            categoryFilters.innerHTML = '<p>No hay filtros para esta sección</p>';
-        }
-
         this.closeDetailView();
     }
 
-    performSearch() {
-        const query = document.getElementById('search-input').value;
-        if (!query || query.trim() === '') {
-            this.loadSectionContent(this.currentSection);
+    switchSection(section) {
+        if (!section) return;
+
+        this.currentSection = section;
+        this.currentCategory = 'all';
+        this.historyStack = []; // Limpiar historial al cambiar sección
+
+        document.querySelectorAll('.main-nav a').forEach(link => {
+            link.classList.toggle('active', link.dataset.section === section);
+        });
+
+        if (section === 'about') {
+            this.showAboutSection();
             return;
         }
 
-        const results = dataLoader.search(query);
-
-        // Mostrar resultados en una vista especial
-        this.showSearchResults(results, query);
+        this.loadCategoryFilters(section);
+        this.loadSectionContent(section);
+        this.closeDetailView();
     }
 
-    showSearchResults(results, query) {
+    loadCategoryFilters(section) {
+        const container = document.getElementById('category-filters');
+        if (!container || !dataLoader.isValidType(section)) return;
+
+        const items = dataLoader.data[section] || [];
+        if (items.length === 0) {
+            container.innerHTML = '<p style="color:#999;">Sin categorías</p>';
+            return;
+        }
+
+        const categories = dataLoader.getAllCategories(section);
+        container.innerHTML = `
+            <button class="category-btn active" data-category="all">Todos (${items.length})</button>
+            ${categories.map(cat => `
+                <button class="category-btn" data-category="${cat}">
+                    ${cat} (${items.filter(i => i.category === cat).length})
+                </button>
+            `).join('')}
+        `;
+    }
+
+    loadSectionContent(section) {
+        if (!dataLoader.isValidType(section)) {
+            this.showNoContentMessage();
+            return;
+        }
+
+        let items = dataLoader.data[section] || [];
+        if (this.currentCategory !== 'all') {
+            items = items.filter(item => item?.category === this.currentCategory);
+        }
+
+        this.renderGrid(items, section);
+        this.clearAllTimeouts();
+        this.setSafeTimeout(() => ImageOptimizer.optimizeCardImages(), 50);
+    }
+
+    showNoContentMessage() {
+        const grid = document.getElementById('content-grid');
+        if (grid) {
+            grid.innerHTML = '<div class="no-results">No hay contenido disponible para esta sección</div>';
+        }
+    }
+
+    renderGrid(items, type) {
         const grid = document.getElementById('content-grid');
         if (!grid) return;
 
-        let allResults = [
-            ...results.characters.map(c => ({...c, type: 'characters'})),
-            ...results.locations.map(l => ({...l, type: 'locations'})),
-            ...results.items.map(i => ({...i, type: 'items'}))
-        ];
+        grid.innerHTML = !items?.length
+            ? '<div class="no-results">No hay elementos en esta sección</div>'
+            : items.filter(item => item).map(item => this.createCard(item, type)).join('');
+    }
 
-        if (allResults.length === 0) {
-            grid.innerHTML = `<div class="no-results">No se encontraron resultados para "${query}"</div>`;
+    showDetail(id, type, dontPushToHistory = false) {
+        const item = this.getItemByType(id, type);
+        if (!item) {
+            console.error(`❌ Item no encontrado: ${type}/${id}`);
             return;
         }
 
-        grid.innerHTML = `
-            <div class="search-header" style="grid-column: 1 / -1; margin-bottom: 1rem;">
-                <h3>Resultados para: "${query}" (${allResults.length} encontrados)</h3>
-            </div>
-            ${allResults.map(item => this.createCard(item, item.type)).join('')}
-        `;
+        // Guardar en historial solo si no venimos de "atrás"
+        if (!dontPushToHistory && this.currentDetail) {
+            this.historyStack.push({...this.currentDetail});
+        }
 
-        // Añadir event listeners a las tarjetas de resultados
-        grid.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('click', () => {
-                const id = parseInt(card.dataset.id);
-                const type = card.dataset.type;
-                this.showDetail(id, type);
-            });
-        });
+        this.currentDetail = {id, type};
+        const relatedInfo = this.getRelatedInfo(item, type);
+        const detailView = document.getElementById('detail-view');
+        if (!detailView) return;
+
+        this.clearAllTimeouts();
+        detailView.innerHTML = this.createDetailView(item, type, relatedInfo);
+        detailView.classList.add('active');
+        this.setSafeTimeout(() => ImageOptimizer.optimizeDetailImages(), 50);
+        detailView.scrollIntoView({behavior: 'smooth'});
+    }
+
+    // Métodos auxiliares
+    getItemByType(id, type) {
+        const getters = {
+            characters: () => dataLoader.getCharacter(id),
+            locations: () => dataLoader.getLocation(id),
+            items: () => dataLoader.getItem(id)
+        };
+        return getters[type]?.() || null;
+    }
+
+    getRelatedInfo(item, type) {
+        const relatedInfo = {characters: [], locations: [], items: []};
+        switch (type) {
+            case 'characters':
+                relatedInfo.locations = (item.relatedLocations || []).map(id => dataLoader.getLocation(id)).filter(Boolean);
+                relatedInfo.items = (item.relatedItems || []).map(id => dataLoader.getItem(id)).filter(Boolean);
+                break;
+            case 'locations':
+                relatedInfo.characters = dataLoader.getCharactersByLocation(item.id);
+                relatedInfo.items = dataLoader.getItemsByLocation(item.id);
+                break;
+            case 'items':
+                relatedInfo.characters = dataLoader.getCharactersByItem(item.id);
+                relatedInfo.locations = dataLoader.getLocationsByItem(item.id);
+                break;
+        }
+        return relatedInfo;
+    }
+
+    createCard(item, type) {
+        const imageUrl = item.image || 'images/placeholder.jpg';
+        const name = item.name || 'Sin nombre';
+        const category = item.category || 'Sin categoría';
+        const description = item.shortDescription || (item.description ? item.description.substring(0, 100) + '...' : 'Sin descripción');
+
+        return `
+            <div class="card" data-id="${item.id}" data-type="${type}">
+                <div class="card-image-container">
+                    <img src="${imageUrl}" alt="${name}" class="card-image" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                </div>
+                <div class="card-content">
+                    <span class="card-category">${category}</span>
+                    <h3>${name}</h3>
+                    <p class="card-description">${description}</p>
+                </div>
+            </div>
+        `;
+    }
+
+    createDetailView(item, type, relatedInfo) {
+        const imageUrl = item.image || 'images/placeholder.jpg';
+        const name = item.name || 'Sin nombre';
+        const category = item.category || 'Sin categoría';
+        const description = item.description || 'Sin descripción';
+
+        const backButton = this.historyStack.length > 0
+            ? `<button class="back-detail">◄</button>`
+            : `<button class="back-detail" hidden></button>`;
+
+        const statsHTML = item.stats && Object.keys(item.stats).length > 0
+            ? `<div class="attributes">${Object.entries(item.stats).map(([key, value]) => `
+            <div class="attribute"><h4>${this.formatKey(key)}</h4><p>${value || 'N/A'}</p></div>
+        `).join('')}</div>`
+            : '';
+
+        const relatedSections = ['characters', 'locations', 'items']
+            .filter(relType => relType !== type && relatedInfo[relType]?.length > 0)
+            .map(relType => {
+                const titles = {characters: 'Personajes', locations: 'Lugares', items: 'Objetos'};
+                return `
+                <div class="related-section">
+                    <h3>${titles[relType]} Relacionados</h3>
+                    <div class="related-grid">
+                        ${relatedInfo[relType].map(r => this.createRelatedCard(r, relType)).join('')}
+                    </div>
+                </div>
+            `;
+            })
+            .join('');
+
+        const historyHTML = item.history ? `
+        <div class="history-section">
+            <h3>Historia</h3>
+            <div class="history-content">${item.history}</div>
+        </div>` : '';
+
+        return `
+        <div class="detail-header">
+            <div class="detail-actions">
+                ${backButton}
+                <button class="close-detail" aria-label="Cerrar">✕</button>
+            </div>
+            <div class="detail-content"> <!-- 🔥 NUEVO CONTENEDOR -->
+                <div class="detail-main">
+                    <div class="detail-image-container">
+                        <img src="${imageUrl}" alt="${name}" class="detail-image" onerror="this.src='images/placeholder.jpg'">
+                    </div>
+                    <div class="detail-info">
+                        <span class="detail-category">${category}</span>
+                        <h2>${name}</h2>
+                        <div class="detail-description">${description}</div>
+                        ${statsHTML}
+                    </div>
+                </div>
+                ${relatedSections}
+                ${historyHTML}
+            </div>
+        </div>
+    `;
+    }
+
+    createRelatedCard(item, type) {
+        const imageUrl = item.image || 'images/placeholder.jpg';
+        const name = item.name || 'Sin nombre';
+
+        return `
+            <div class="related-card" data-id="${item.id}" data-type="${type}">
+                <img src="${imageUrl}" alt="${name}" class="related-card-image" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                <div class="related-card-name">${name}</div>
+            </div>
+        `;
+    }
+
+    closeDetailView() {
+        document.getElementById('detail-view')?.classList.remove('active');
+        this.currentDetail = null;
+        this.historyStack = []; // Limpiar historial al cerrar manualmente
     }
 
     formatKey(key) {
         return key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
     }
 
-    capitalize(str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
+    // Cleanup para casos de hot-reload
+    destroy() {
+        this.clearAllTimeouts();
+        this.historyStack = [];
     }
 }
-
-// Inicializar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', () => {
-    window.navigation = new NavigationManager();
-    // Iniciar con la sección de personajes
-    navigation.switchSection('characters');
-});

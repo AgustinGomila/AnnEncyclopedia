@@ -1,156 +1,112 @@
-class DataLoader {
-    constructor() {
-        this.data = {
-            characters: [],
-            locations: [],
-            items: [],
-            categories: {}
-        };
-    }
+// INSTANCIA GLOBAL PRIMERO
+const dataLoader = new DataLoader();
 
-    async loadAllData() {
-        try {
-            const [characters, locations, items, categories] = await Promise.all([
-                this.loadJSON('data/characters.json'),
-                this.loadJSON('data/locations.json'),
-                this.loadJSON('data/items.json'),
-                this.loadJSON('data/categories.json')
-            ]);
-
-            this.data.characters = characters || [];
-            this.data.locations = locations || [];
-            this.data.items = items || [];
-            this.data.categories = categories || {};
-
-            this.updateStats();
-            return this.data;
-
-        } catch (error) {
-            console.error('Error cargando datos:', error);
-            return null;
-        }
-    }
-
-    async loadJSON(filePath) {
-        try {
-            const response = await fetch(filePath);
-            if (!response.ok) {
-                throw new Error(`Error cargando ${filePath}: ${response.status}`);
-            }
-            const data = await response.json();
-            return Array.isArray(data) || typeof data === 'object' ? data : null;
-        } catch (error) {
-            console.warn(`No se pudo cargar ${filePath}:`, error);
-            return null;
-        }
-    }
-
-    updateStats() {
-        const stats = document.getElementById('stats-display');
-        if (stats) {
-            stats.innerHTML = `
-                <p>👥 Personajes: ${this.data.characters?.length || 0}</p>
-                <p>📍 Lugares: ${this.data.locations?.length || 0}</p>
-                <p>🎁 Objetos: ${this.data.items?.length || 0}</p>
-                <p>🏷️ Categorías: ${Object.keys(this.data.categories || {}).length}</p>
-            `;
-        }
-    }
-
-    search(query) {
-        query = query.toLowerCase().trim();
-
-        const results = {
-            characters: (this.data.characters || []).filter(char =>
-                    char && (
-                        (char.name && char.name.toLowerCase().includes(query)) ||
-                        (char.description && char.description.toLowerCase().includes(query)) ||
-                        (char.category && char.category.toLowerCase().includes(query)) ||
-                        (char.history && char.history.toLowerCase().includes(query))
-                    )
-            ),
-            locations: (this.data.locations || []).filter(loc =>
-                    loc && (
-                        (loc.name && loc.name.toLowerCase().includes(query)) ||
-                        (loc.description && loc.description.toLowerCase().includes(query)) ||
-                        (loc.history && loc.history.toLowerCase().includes(query))
-                    )
-            ),
-            items: (this.data.items || []).filter(item =>
-                    item && (
-                        (item.name && item.name.toLowerCase().includes(query)) ||
-                        (item.description && item.description.toLowerCase().includes(query))
-                    )
-            )
-        };
-
-        return results;
-    }
-
-    getCharacter(id) {
-        return (this.data.characters || []).find(char => char && char.id === id);
-    }
-
-    getLocation(id) {
-        return (this.data.locations || []).find(loc => loc && loc.id === id);
-    }
-
-    getItem(id) {
-        return (this.data.items || []).find(item => item && item.id === id);
-    }
-
-    // Métodos para obtener relaciones
-
-    getCharactersByLocation(locationId) {
-        return (this.data.characters || []).filter(char =>
-            char && char.relatedLocations && char.relatedLocations.includes(locationId)
-        );
-    }
-
-    getItemsByLocation(locationId) {
-        return (this.data.items || []).filter(item =>
-            item && item.relatedLocations && item.relatedLocations.includes(locationId)
-        );
-    }
-
-    getCharactersByItem(itemId) {
-        return (this.data.characters || []).filter(char =>
-            char && char.relatedItems && char.relatedItems.includes(itemId)
-        );
-    }
-
-    getLocationsByItem(itemId) {
-        return (this.data.locations || []).filter(loc =>
-            loc && loc.relatedItems && loc.relatedItems.includes(itemId)
-        );
-    }
-
-    filterByCategory(type, category) {
-        // Asegurarnos de que el tipo existe y es un array
-        if (!this.data[type] || !Array.isArray(this.data[type])) {
-            return [];
-        }
-        return this.data[type].filter(item => item && item.category === category);
-    }
-
-    getAllCategories(type) {
-        // Asegurarnos de que el tipo existe y es un array
-        if (!this.data[type] || !Array.isArray(this.data[type])) {
-            return [];
-        }
-
-        const categories = new Set();
-        this.data[type].forEach(item => {
-            if (item && item.category) categories.add(item.category);
-        });
-        return Array.from(categories);
-    }
-
-    // Método auxiliar para verificar si un tipo es válido
-    isValidType(type) {
-        return ['characters', 'locations', 'items'].includes(type);
-    }
+// FUNCIÓN CONSTRUCTORA
+function DataLoader() {
+    this.data = {
+        characters: [],
+        locations: [],
+        items: [],
+        categories: {}
+    };
+    this.loaded = false;
 }
 
-// Instancia global
-window.dataLoader = new DataLoader();
+// TODOS LOS MÉTODOS NECESARIOS
+
+DataLoader.prototype.loadAllData = async function () {
+    try {
+        console.log('📡 Cargando JSONs...');
+
+        const [characters, locations, items, categories] = await Promise.all([
+            fetch('data/characters.json').then(r => r.ok ? r.json() : []).catch(() => []),
+            fetch('data/locations.json').then(r => r.ok ? r.json() : []).catch(() => []),
+            fetch('data/items.json').then(r => r.ok ? r.json() : []).catch(() => []),
+            fetch('data/categories.json').then(r => r.ok ? r.json() : {}).catch(() => ({}))
+        ]);
+
+        this.data = {characters, locations, items, categories};
+        this.loaded = true;
+
+        console.log('✅ Datos cargados:', {
+            personajes: characters.length,
+            lugares: locations.length,
+            objetos: items.length
+        });
+
+        return true;
+    } catch (error) {
+        console.error('❌ Error cargando datos:', error);
+        return false;
+    }
+};
+
+DataLoader.prototype.updateStats = function () {
+    const stats = document.getElementById('stats-display');
+    if (stats) {
+        stats.innerHTML = `
+            <p>👥 Personajes: ${this.data.characters.length}</p>
+            <p>📍 Lugares: ${this.data.locations.length}</p>
+            <p>🎁 Objetos: ${this.data.items.length}</p>
+            <p>🏷️ Categorías: ${Object.keys(this.data.categories).length}</p>
+        `;
+    }
+};
+
+// MÉTODO DE BÚSQUEDA
+DataLoader.prototype.search = function (query) {
+    const q = query.toLowerCase().trim();
+    return {
+        characters: this.data.characters.filter(char =>
+            char.name?.toLowerCase().includes(q) ||
+            char.description?.toLowerCase().includes(q) ||
+            char.category?.toLowerCase().includes(q) ||
+            char.history?.toLowerCase().includes(q)
+        ),
+        locations: this.data.locations.filter(loc =>
+            loc.name?.toLowerCase().includes(q) ||
+            loc.description?.toLowerCase().includes(q) ||
+            loc.history?.toLowerCase().includes(q)
+        ),
+        items: this.data.items.filter(item =>
+            item.name?.toLowerCase().includes(q) ||
+            item.description?.toLowerCase().includes(q)
+        )
+    };
+};
+
+// MÉTODOS DE OBTENCIÓN POR ID
+DataLoader.prototype.getCharacter = function (id) {
+    return this.data.characters.find(c => c?.id === id);
+};
+DataLoader.prototype.getLocation = function (id) {
+    return this.data.locations.find(l => l?.id === id);
+};
+DataLoader.prototype.getItem = function (id) {
+    return this.data.items.find(i => i?.id === id);
+};
+
+// MÉTODOS DE RELACIONES
+DataLoader.prototype.getCharactersByLocation = function (locationId) {
+    return this.data.characters.filter(char => char.relatedLocations?.includes(locationId));
+};
+DataLoader.prototype.getItemsByLocation = function (locationId) {
+    return this.data.items.filter(item => item.relatedLocations?.includes(locationId));
+};
+DataLoader.prototype.getCharactersByItem = function (itemId) {
+    return this.data.characters.filter(char => char.relatedItems?.includes(itemId));
+};
+DataLoader.prototype.getLocationsByItem = function (itemId) {
+    return this.data.locations.filter(loc => loc.relatedItems?.includes(itemId));
+};
+
+// MÉTODOS DE FILTRADO
+DataLoader.prototype.filterByCategory = function (type, category) {
+    return this.data[type]?.filter(item => item?.category === category) || [];
+};
+DataLoader.prototype.getAllCategories = function (type) {
+    return [...new Set(this.data[type]?.map(item => item?.category).filter(Boolean))] || [];
+};
+DataLoader.prototype.isValidType = function (type) {
+    return ['characters', 'locations', 'items'].includes(type);
+};

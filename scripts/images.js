@@ -1,70 +1,63 @@
 class ImageOptimizer {
-    static async optimizeCardImages() {
-        const cards = document.querySelectorAll('.card-image-container');
-
-        cards.forEach(async (container) => {
-            const img = container.querySelector('img');
+    static optimizeCardImages() {
+        document.querySelectorAll('.card-image-container:not([data-optimized])').forEach(container => {
+            const img = container.querySelector('img.card-image'); // Específico
             if (!img) return;
 
-            // Esperar a que la imagen cargue
-            if (img.complete) {
-                this.checkAndAdjustImage(img, container);
+            const process = () => {
+                this.adjustCardImage(img, container);
+                container.dataset.optimized = 'true';
+                img.classList.add('loaded'); // Muestra la imagen
+            };
+
+            if (img.complete && img.naturalWidth > 0) {
+                process();
             } else {
-                img.onload = () => this.checkAndAdjustImage(img, container);
+                img.addEventListener('load', process, {once: true});
             }
         });
     }
 
-    static checkAndAdjustImage(img, container) {
-        // Verificar proporción de la imagen
+    static optimizeDetailImages() {
+        document.querySelectorAll('.detail-image-container:not([data-optimized])').forEach(container => {
+            const img = container.querySelector('img.detail-image');
+            if (!img) return;
+
+            // Aplicar estilos INMEDIATAMENTE, sin esperar
+            container.style.backgroundColor = '#f5f5f5';
+            container.dataset.optimized = 'true';
+
+            // Mostrar con transición SUAVE
+            const showImage = () => {
+                img.style.transition = 'opacity 0.4s ease';
+                img.style.opacity = '1';
+            };
+
+            if (img.complete) {
+                showImage();
+            } else {
+                img.addEventListener('load', showImage, {once: true});
+            }
+        });
+    }
+
+    static adjustCardImage(img, container) {
         const aspectRatio = img.naturalWidth / img.naturalHeight;
 
-        // Si la imagen es muy vertical (relación < 0.7)
+        container.classList.remove('vertical-image', 'horizontal-image');
+
         if (aspectRatio < 0.7) {
             container.classList.add('vertical-image');
-
-            // Ajustar para mostrar más de la imagen vertical
             img.style.objectFit = 'contain';
-            container.style.display = 'flex';
-            container.style.alignItems = 'center';
-            container.style.justifyContent = 'center';
             container.style.backgroundColor = '#f5f5f5';
-
-            // Opcional: Añadir padding para no tocar los bordes
             container.style.padding = '10px';
         } else if (aspectRatio > 1.5) {
-            // Si la imagen es muy horizontal
             container.classList.add('horizontal-image');
-            img.style.objectPosition = 'center top';
-        }
-    }
-
-    static async optimizeDetailImages() {
-        const detailContainers = document.querySelectorAll('.detail-image-container');
-
-        detailContainers.forEach(async (container) => {
-            const img = container.querySelector('img');
-            if (!img) return;
-
-            if (img.complete) {
-                this.adjustDetailImage(img, container);
-            } else {
-                img.onload = () => this.adjustDetailImage(img, container);
-            }
-        });
-    }
-
-    static adjustDetailImage(img, container) {
-        const aspectRatio = img.naturalWidth / img.naturalHeight;
-
-        // Para la vista detallada, siempre mostrar toda la imagen
-        img.style.objectFit = 'contain';
-        container.style.backgroundColor = '#f5f5f5';
-
-        // Si la imagen es muy vertical, ajustar contenedor
-        if (aspectRatio < 0.7) {
-            container.style.maxHeight = '600px';
-            container.style.overflowY = 'auto';
+            img.style.objectFit = 'cover';
+            img.style.objectPosition = 'center 30%';
+        } else {
+            img.style.objectFit = 'cover';
+            img.style.objectPosition = 'center';
         }
     }
 }

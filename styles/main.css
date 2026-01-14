@@ -1,12 +1,16 @@
-/* Variables y reset */
+/* =========================================
+   VARIABLES Y RESET
+   ========================================= */
 :root {
-    --primary-color: #2c3e50;
-    --secondary-color: #3498db;
-    --accent-color: #e74c3c;
-    --light-color: #ecf0f1;
-    --dark-color: #2c3e50;
-    --card-bg: white;
+    --primary: #2c3e50;
+    --secondary: #3498db;
+    --accent: #e74c3c;
+    --light: #ecf0f1;
+    --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.2);
+    --radius: 10px;
+    --transition: 0.3s ease;
 }
 
 * {
@@ -17,14 +21,16 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: var(--bg-gradient);
     min-height: 100vh;
-    padding-bottom: 60px;
+    padding-bottom: 120px;
 }
 
-/* Header */
+/* =========================================
+   HEADER
+   ========================================= */
 header {
-    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(to right, var(--primary), var(--secondary));
     color: white;
     padding: 1.5rem 2rem;
     display: flex;
@@ -54,11 +60,10 @@ header {
     text-decoration: none;
     padding: 0.5rem 1rem;
     border-radius: 20px;
-    transition: all 0.3s;
+    transition: all var(--transition);
 }
 
-.main-nav a:hover,
-.main-nav a.active {
+.main-nav a:hover, .main-nav a.active {
     background: rgba(255, 255, 255, 0.2);
 }
 
@@ -75,7 +80,7 @@ header {
 }
 
 #search-btn {
-    background: var(--accent-color);
+    background: var(--accent);
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -83,7 +88,9 @@ header {
     cursor: pointer;
 }
 
-/* Layout principal */
+/* =========================================
+   LAYOUT
+   ========================================= */
 main {
     display: grid;
     grid-template-columns: 250px 1fr;
@@ -93,10 +100,9 @@ main {
     margin: 0 auto;
 }
 
-/* Sidebar */
 .sidebar {
-    background: var(--card-bg);
-    border-radius: 10px;
+    background: white;
+    border-radius: var(--radius);
     padding: 1.5rem;
     box-shadow: var(--shadow);
     height: fit-content;
@@ -106,16 +112,16 @@ main {
     margin-bottom: 2rem;
 }
 
-.filters h3, .stats h3 {
-    color: var(--primary-color);
+.stats h3, .filters h3 {
+    color: var(--primary);
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--secondary-color);
+    border-bottom: 2px solid var(--secondary);
 }
 
 .category-btn {
     display: block;
-    background: var(--light-color);
+    background: var(--light);
     border: none;
     padding: 0.5rem 1rem;
     margin-bottom: 0.5rem;
@@ -123,27 +129,23 @@ main {
     cursor: pointer;
     width: 100%;
     text-align: left;
-    transition: all 0.3s;
+    transition: all var(--transition);
 }
 
-.category-btn:hover {
-    background: var(--secondary-color);
+.category-btn:hover, .category-btn.active {
+    background: var(--secondary);
     color: white;
 }
 
-.category-btn.active {
-    background: var(--secondary-color);
-    color: white;
-}
-
-/* Grid responsive */
+/* =========================================
+   GRID Y TARJETAS
+   ========================================= */
 .grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
 }
 
-/* Contenido principal - Ajuste para pantalla completa */
 .content {
     display: flex;
     flex-direction: column;
@@ -151,43 +153,64 @@ main {
     min-height: calc(100vh - 300px);
 }
 
-/* Tarjetas en grid - Mejor manejo de imágenes */
+/* Tarjeta base */
 .card {
-    background: var(--card-bg);
-    border-radius: 10px;
+    background: white;
+    border-radius: var(--radius);
     overflow: hidden;
     box-shadow: var(--shadow);
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform var(--transition), box-shadow var(--transition);
     cursor: pointer;
     display: flex;
     flex-direction: column;
     height: 100%;
+    position: relative;
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-hover);
 }
 
+/* Efecto hover mágico */
+.card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
+    transform: scale(0);
+    transition: transform 0.5s ease;
+    pointer-events: none;
+}
+
+.card:hover::before {
+    transform: scale(1);
+}
+
+/* Imágenes del grid */
 .card-image-container {
     width: 100%;
-    height: 250px; /* Altura fija para todas las imágenes */
+    height: 250px;
     overflow: hidden;
-    position: relative;
     background: #f5f5f5;
+    position: relative;
 }
 
 .card-image {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Esto es clave para mantener proporciones */
-    transition: transform 0.3s;
+    object-fit: cover;
+    transition: transform var(--transition);
 }
 
 .card:hover .card-image {
     transform: scale(1.05);
 }
 
+/* Contenido de tarjeta */
 .card-content {
     padding: 1rem;
     flex: 1;
@@ -196,14 +219,14 @@ main {
 }
 
 .card h3 {
-    color: var(--primary-color);
+    color: var(--primary);
     margin-bottom: 0.5rem;
     font-size: 1.1rem;
 }
 
 .card-category {
     display: inline-block;
-    background: var(--light-color);
+    background: var(--light);
     padding: 0.2rem 0.8rem;
     border-radius: 15px;
     font-size: 0.8rem;
@@ -222,7 +245,52 @@ main {
     -webkit-box-orient: vertical;
 }
 
-/* Vista detallada - Mejor manejo de imágenes */
+/* =========================================
+   VISTA DETALLADA
+   ========================================= */
+.detail-view {
+    background: white;
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    display: none;
+}
+
+.detail-view.active {
+    display: block;
+}
+
+/* =========================================
+   HEADER DE DETALLE
+   ========================================= */
+.detail-header {
+    display: grid;
+    grid-template-columns: 120px 1fr; /* Columna fija para botones, resto fluye */
+    gap: 2rem;
+    margin-bottom: 2rem;
+    align-items: flex-start; /* Alinear al inicio */
+}
+
+.detail-main {
+    display: contents; /* El contenido fluye en el grid del padre */
+    grid-column: 2; /* Ocupa la segunda columna */
+}
+
+/* Ocultar si no hay historial (JS lo controla) */
+.back-detail[hidden] {
+    display: none;
+}
+
+/* =========================================
+   CONTENIDO - COLUMNA DERECHA
+   ========================================= */
+.detail-content {
+    grid-column: 2; /* Ocupa segunda columna */
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* Espacio entre secciones */
+}
+
 .detail-main {
     display: flex;
     gap: 2rem;
@@ -230,9 +298,9 @@ main {
 }
 
 .detail-image-container {
-    flex: 0 0 300px; /* Ancho fijo para el contenedor de imagen */
+    flex: 0 0 300px;
     max-width: 100%;
-    border-radius: 10px;
+    border-radius: var(--radius);
     overflow: hidden;
     background: #f5f5f5;
     display: flex;
@@ -240,29 +308,30 @@ main {
     justify-content: center;
     min-height: 300px;
     max-height: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .detail-image {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Muestra toda la imagen sin recortar */
+    object-fit: contain; /* ESTO PREVIENE EL FLICKER */
     max-height: 500px;
 }
 
 .detail-info {
     flex: 1;
-    min-width: 0; /* Importante para que el contenido no desborde */
+    min-width: 0;
 }
 
 .detail-info h2 {
-    color: white;
+    color: var(--primary);
     margin-bottom: 1rem;
-    font-size: 2.5rem;
     word-wrap: break-word;
 }
 
 .detail-category {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--secondary);
     color: white;
     padding: 0.3rem 1rem;
     border-radius: 20px;
@@ -274,80 +343,51 @@ main {
 .detail-description {
     line-height: 1.6;
     margin-bottom: 1.5rem;
-    font-size: 1.1rem;
-    opacity: 0.9;
     word-wrap: break-word;
 }
 
-.detail-view {
-    background: var(--card-bg);
-    border-radius: 10px;
-    padding: 2rem;
-    box-shadow: var(--shadow);
-    display: none;
-}
-
-.detail-view.active {
-    display: block;
-}
-
-.detail-header {
-    display: flex;
-    gap: 2rem;
-    margin-bottom: 2rem;
-}
-
-.detail-image {
-    width: 300px;
-    height: 300px;
-    object-fit: cover;
-    border-radius: 10px;
-}
-
-.detail-info h2 {
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-}
-
-.detail-category {
-    background: var(--secondary-color);
-    color: white;
-    padding: 0.3rem 1rem;
-    border-radius: 20px;
-    display: inline-block;
-    margin-bottom: 1rem;
-}
-
-.detail-description {
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-}
-
+/* =========================================
+   ATRIBUTOS Y RELACIONES
+   ========================================= */
 .attributes {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
-    margin-top: 2rem;
 }
 
 .attribute {
-    background: var(--light-color);
+    background: var(--light);
     padding: 1rem;
     border-radius: 5px;
 }
 
 .attribute h4 {
-    color: var(--primary-color);
+    color: var(--primary);
     margin-bottom: 0.5rem;
 }
 
-/* Tarjetas relacionadas */
+.related-section,
+.history-section {
+    margin-top: 0;
+}
+
+.related-section h3 {
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1rem;
+}
+
 .related-card {
-    background: var(--light-color);
+    background: var(--light);
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform var(--transition), box-shadow var(--transition);
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -376,22 +416,89 @@ main {
     white-space: nowrap;
 }
 
-/* Footer */
-footer {
-    background: var(--primary-color);
-    color: white;
-    text-align: center;
+/* =========================================
+   SECCIÓN HISTORIA - CON SEPARADOR
+   ========================================= */
+.history-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--light);
+}
+
+.history-section h3 {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.history-section h3::before {
+    content: "📖";
+    font-size: 1.8rem;
+}
+
+.history-content {
+    line-height: 1.8;
+    font-size: 1.05rem;
+    color: #444;
+    background: var(--light);
     padding: 1.5rem;
-    position: fixed;
-    bottom: 0;
+    border-radius: var(--radius);
+    border-left: 4px solid var(--secondary);
+}
+
+/* =========================================
+   BOTONES DE ACCIÓN EN DETALLE
+   ========================================= */
+.detail-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 120px; /* Ancho fijo */
+    flex-shrink: 0; /* No se encoge */
+}
+
+.back-detail,
+.close-detail {
     width: 100%;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all var(--transition);
+    text-align: center;
+    color: white;
 }
 
-footer p {
-    margin-bottom: 0.5rem;
-    opacity: 0.8;
+.back-detail {
+    background: var(--secondary);
 }
 
+.back-detail:hover {
+    background: var(--primary);
+    transform: translateY(-2px);
+}
+
+.close-detail {
+    background: var(--accent);
+    font-weight: bold;
+}
+
+.close-detail:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+}
+
+.back-detail[hidden] {
+    visibility: hidden;
+}
+
+/* =========================================
+   ESTADOS Y UTILIDADES
+   ========================================= */
 .loading {
     text-align: center;
     padding: 2rem;
@@ -399,48 +506,74 @@ footer p {
     color: #666;
 }
 
-/* Estilos para imágenes verticales */
-.vertical-image {
-    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: #999;
 }
 
-.vertical-image .card-image {
+.error {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: var(--accent);
+}
+
+/* =========================================
+   IMÁGENES VERTICALES/HORIZONTALES
+   ========================================= */
+.card.vertical-image .card-image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    padding: 10px;
+}
+
+.card.vertical-image .card-image {
     object-fit: contain !important;
     max-height: 90%;
     max-width: 90%;
 }
 
-/* Estilos para imágenes horizontales */
-.horizontal-image .card-image {
-    object-position: center 30%; /* Enfoca en la parte superior para retratos */
+.card.horizontal-image .card-image {
+    object-position: center 30%;
 }
 
-/* Placeholder mejorado */
-.card-image-container:empty::before,
-.detail-image-container:empty::before {
-    content: "🖼️";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 3rem;
-    color: #ccc;
-}
-
-/* Indicador de carga de imagen */
-.card-image.loading,
-.detail-image.loading {
+/* =========================================
+   PREVENT FOUT (Flash of Unstyled Content)
+   ========================================= */
+/* SOLO para imágenes del grid */
+.card-image-container img.card-image {
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.4s ease;
 }
 
-.card-image.loaded,
-.detail-image.loaded {
+.card-image-container img.card-image.loaded {
     opacity: 1;
 }
 
-/* Contenedor de imagen con sombra para mejor contraste */
-.detail-image-container {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+/* Imágenes de detalle: siempre visibles */
+.detail-image-container img.detail-image {
+    opacity: 1;
+}
+
+/* =========================================
+   FOOTER
+   ========================================= */
+/* FORZAR alineación central */
+footer {
+    background: var(--primary);
+    color: white;
+    padding: 1rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center !important; /* !important para asegurar */
+}
+
+footer p {
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
 }
