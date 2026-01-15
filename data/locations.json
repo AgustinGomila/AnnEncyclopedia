@@ -1,16 +1,16 @@
 [
   {
     "id": 1,
-    "name": "Bosque Eterno",
-    "category": "Bosques",
+    "name": "Pueblo Goldsight",
+    "category": "Pueblo",
     "image": "images/locations/bosque.jpg",
-    "description": "Un bosque que nunca duerme, lleno de vida mágica y criaturas extraordinarias. Los árboles aquí tienen sus propias conciencias.",
-    "history": "Según las leyendas, el Bosque Eterno fue creado por los primeros espíritus de la naturaleza. Cada árbol plantado aquí contiene un fragmento de sabiduría ancestral.",
+    "description": "Un pueblo nómada, compuesto por los Reyes Theryokins y su población de diferentes razas y etnias.",
+    "history": "Según los libros antiguos, el Pueblo Goldsight no es un sitio en específico, sinó algo que está en constante movimiento. Se asienta, se mueve, desaparece, o deja una huella. Pero siempre se lleva algo consigo.",
     "features": [
-      "Árboles parlantes",
-      "Flores luminosas",
-      "Ríos de cristal",
-      "Criaturas místicas"
+      "Tecnología global",
+      "Theryokins",
+      "Ambulante",
+      "Mil lenguajes"
     ],
     "relatedItems": [
       1,
@@ -20,16 +20,16 @@
   },
   {
     "id": 2,
-    "name": "Ruinas Antiguas",
-    "category": "Ruinas",
+    "name": "Thoowlder",
+    "category": "Pueblo",
     "image": "images/locations/ruinas.jpg",
-    "description": "Restos de una civilización olvidada, llenos de misterios y artefactos poderosos. Las paredes están cubiertas de inscripciones indescifrables.",
-    "history": "Nadie sabe quién construyó estas ruinas, pero su tecnología supera todo lo conocido. Algunos dicen que fueron los primeros humanos, otros creen que fueron seres de otro mundo.",
+    "description": "Pueblo varado en un gran cañón, donde antes existía el mar rojo, ahora todo seco.",
+    "history": "Thoowlder es un pueblo descendiente de los Goldsight, quienes escaparon durante su casería en La Ciudadela. Establecieron este sitio como uno de los cinco pueblos restantes para salvar a su gente.",
     "features": [
-      "Tecnología antigua",
-      "Trampas mecánicas",
-      "Salas ocultas",
-      "Estatuas vivientes"
+      "Armas de fuego",
+      "Vehículos a motor",
+      "Sistema de cuevas",
+      "Muros dorados"
     ],
     "relatedItems": [
       3
@@ -37,16 +37,16 @@
   },
   {
     "id": 3,
-    "name": "Ciudad del Conocimiento",
-    "category": "Ciudades",
+    "name": "Pueblo Pérsico",
+    "category": "Pueblo",
     "image": "images/locations/ciudad.jpg",
-    "description": "Una ciudad dedicada al aprendizaje y la preservación del saber. Cada edificio es una biblioteca o escuela.",
-    "history": "Fundada por los primeros sabios después del Gran Olvido, esta ciudad ha sido el bastión del conocimiento durante milenios.",
+    "description": "Pueblo inventor de los carnavales, fiestas y la pirotecnia.",
+    "history": "Descendientes de asia, el Pueblo Pérsicos es medio oriental, y conocido por su amor al fuego, la fiesta, el color y las danzas.",
     "features": [
-      "Biblioteca Central",
-      "Torre de los Sabios",
-      "Jardín Botánico Mágico",
-      "Observatorio Estelar"
+      "Pólvora de colores",
+      "Rituales para los Dioses",
+      "Ropas de colores",
+      "Fogatas comunitarias"
     ]
   }
 ]

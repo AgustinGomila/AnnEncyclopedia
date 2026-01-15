@@ -89,6 +89,37 @@ header {
 }
 
 /* =========================================
+   BOTÓN BORRAR BÚSQUEDA
+   ========================================= */
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+#clear-search {
+    position: absolute;
+    right: 60px;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.3rem;
+    display: none;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+#clear-search:hover {
+    opacity: 1;
+}
+
+#clear-search.visible {
+    display: block;
+}
+
+/* =========================================
    LAYOUT
    ========================================= */
 main {
@@ -650,4 +681,179 @@ footer {
 footer p {
     margin-bottom: 0.5rem;
     opacity: 0.8;
+}
+
+/* =========================================
+   VARIABLES - TEMA CLARO/OSCURO
+   ========================================= */
+:root {
+    --primary: #2c3e50;
+    --secondary: #3498db;
+    --accent: #e74c3c;
+    --light: #ecf0f1;
+    --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --text-color: #333;
+    --card-bg: white;
+    --border-color: #e0e0e0;
+}
+
+body.dark-mode {
+    --primary: #1a252f;
+    --secondary: #2980b9;
+    --accent: #c0392b;
+    --light: #34495e;
+    --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    --text-color: #ecf0f1;
+    --card-bg: #2c3e50;
+    --border-color: #3a4a5c;
+}
+
+/* =========================================
+   BOTÓN TOGGLE TEMA
+   ========================================= */
+#theme-toggle {
+    background: var(--light);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+    margin-left: 1rem;
+    box-shadow: var(--shadow);
+}
+
+#theme-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* =========================================
+   SECCIÓN ACERCA DE - TEMA OSCURO
+   ========================================= */
+.about-content {
+    background: var(--card-bg) !important; /* Sobrescribe blanco */
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.about-content h2,
+.about-content h3 {
+    color: var(--text-color) !important; /* Sobrescribe colores fijos */
+}
+
+.about-content code {
+    background: var(--light) !important;
+    color: var(--text-color) !important;
+}
+
+/* =========================================
+   MODO OSCURO - CONTRASTE MEJORADO
+   ========================================= */
+
+/* Tarjetas en grid */
+body.dark-mode .card {
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+body.dark-mode .card h3,
+body.dark-mode .card-description {
+    color: var(--text-color);
+}
+
+/* Botones de categoría */
+body.dark-mode .category-btn {
+    background: var(--light);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+body.dark-mode .category-btn.active,
+body.dark-mode .category-btn:hover {
+    background: var(--secondary);
+    color: white;
+    border-color: var(--secondary);
+}
+
+/* Detalle principal */
+body.dark-mode .detail-view {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+body.dark-mode .detail-info h2,
+body.dark-mode .detail-description {
+    color: var(--text-color);
+}
+
+/* Atributos (stats) */
+body.dark-mode .attribute {
+    background: var(--light);
+    border: 1px solid var(--border-color);
+}
+
+body.dark-mode .attribute h4 {
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Tarjetas relacionadas */
+body.dark-mode .related-card {
+    background: var(--light);
+    border: 1px solid var(--border-color);
+}
+
+body.dark-mode .related-card-name {
+    color: var(--text-color);
+    border-top: 1px solid var(--border-color);
+}
+
+/* Sección historia */
+body.dark-mode .history-content {
+    background: var(--light);
+    border-left: 4px solid var(--secondary);
+    color: var(--text-color);
+}
+
+/* Miniaturas de imágenes */
+body.dark-mode .thumbnail {
+    background: var(--light);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .thumbnail.active {
+    border-color: var(--secondary);
+}
+
+/* Botones de acción */
+body.dark-mode .back-detail,
+body.dark-mode .close-detail {
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .back-detail:hover {
+    background: var(--primary);
+}
+
+body.dark-mode .close-detail:hover {
+    background: #c0392b;
+}
+
+/* =========================================
+   APLICACIÓN GENERAL DE TEMA
+   ========================================= */
+body {
+    color: var(--text-color);
+}
+
+.card, .sidebar, .detail-view, .about-content,
+.category-btn, .attributes, .attribute, .related-card,
+.history-content {
+    background: var(--card-bg);
+    color: var(--text-color);
+    border-color: var(--border-color);
 }

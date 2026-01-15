@@ -6,6 +6,10 @@ class NavigationManager {
         this.pendingTimeouts = new Set();
         this.historyStack = []; // Para navegación hacia atrás en detalles
         this.init();
+
+        // INICIALIZACIÓN DE TEMA Y BÚSQUEDA
+        this.initTheme();
+        this.initClearSearch();
     }
 
     init() {
@@ -13,6 +17,23 @@ class NavigationManager {
         this.setupDelegatedListeners();
         // Listeners para elementos permanentes (navegación, búsqueda)
         this.setupStaticListeners();
+    }
+
+    // TEMA OSCURO/CLARO
+    initTheme() {
+        const toggle = document.getElementById('theme-toggle');
+        if (!toggle) return;
+
+        const savedTheme = localStorage.getItem('theme') ||
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.body.classList.toggle('dark-mode', savedTheme === 'dark');
+        toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+        toggle.addEventListener('click', () => {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            toggle.textContent = isDark ? '☀️' : '🌙';
+        });
     }
 
     // LISTENERS DELEGADOS
@@ -110,6 +131,30 @@ class NavigationManager {
                 if (e.key === 'Enter') this.performSearch();
             });
         }
+    }
+
+    // BOTÓN BORRAR BÚSQUEDA
+    initClearSearch() {
+        const searchBox = document.querySelector('.search-box');
+        const searchInput = document.getElementById('search-input');
+        const clearBtn = document.createElement('button');
+        clearBtn.id = 'clear-search';
+        clearBtn.innerHTML = '✕';
+        clearBtn.setAttribute('aria-label', 'Limpiar búsqueda');
+        searchBox?.appendChild(clearBtn);
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            searchInput.focus();
+            this.performSearch();
+            clearBtn.classList.remove('visible');
+        });
+
+        searchInput.addEventListener('input', () => {
+            clearBtn.classList.toggle('visible', searchInput.value.length > 0);
+        });
+
+        if (searchInput.value) clearBtn.classList.add('visible');
     }
 
     // GESTIÓN DE TIMERS

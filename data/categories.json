@@ -1,10 +1,10 @@
 {
   "characters": [
     "Héroes",
-    "Guardianes",
+    "Secundarios",
     "Villanos",
     "Aliados",
-    "Místicos"
+    "Dioses"
   ],
   "locations": [
     "Bosques",
@@ -21,7 +21,7 @@
     "Mapas"
   ],
   "books": [
-    "Fantasía Épica",
-    "Guía"
+    "Ciencia Ficción",
+    "Thriller"
   ]
 }
