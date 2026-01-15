@@ -111,7 +111,15 @@
     "category": "Híbrido Theryokin",
     "images": [
       {
-        "src": "images/characters/elenk.jpg",
+        "src": "images/characters/Elenk1.png",
+        "description": ""
+      },
+      {
+        "src": "images/characters/Elenk2.png",
+        "description": ""
+      },
+      {
+        "src": "images/characters/Elenk3.png",
         "description": ""
       }
     ],
