@@ -47,7 +47,20 @@
 /* =========================================
    MÓVILES
    ========================================= */
+/* Responsive */
 @media (max-width: 768px) {
+    .detail-main {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-image-container {
+        width: 100%;
+    }
+
+    .image-thumbnails {
+        justify-content: center;
+    }
+
     .detail-header {
         grid-template-columns: 1fr; /* Apilar en móviles */
     }

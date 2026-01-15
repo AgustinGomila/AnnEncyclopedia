@@ -3,7 +3,13 @@
     "id": 1,
     "name": "Hiro Goldsight",
     "category": "Híbrido Theryokin",
-    "image": "images/characters/hiro.jpg",
+    "image": [
+      "images/characters/hiro.jpg",
+      "images/characters/hiro2.jpg",
+      "images/characters/hiro3.jpg",
+      "images/characters/hiro4.jpg",
+      "images/characters/hiro5.jpg"
+    ],
     "shortDescription": "Valiente exploradora del desierto y descendiente Theryokin.",
     "description": "Hiro es una ex esclava Theryokin que liberó a su gente a través de la revolución y el activismo.",
     "history": "Nacida del mestizaje entre una Goldsight y un Etiope colono, ella es esclava de sus raices y busca la verdad a través de su historia, descubriendo el pasado de su turbulento linaje.",

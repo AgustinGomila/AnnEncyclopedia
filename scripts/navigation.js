@@ -29,6 +29,23 @@ class NavigationManager {
 
         // Tarjetas RELACIONADAS EN DETALLE
         document.getElementById('detail-view')?.addEventListener('click', (e) => {
+            // Thumbnail click
+            const thumbnail = e.target.closest('.thumbnail');
+            if (thumbnail) {
+                e.preventDefault();
+                const fullImageSrc = thumbnail.dataset.full;
+                const index = parseInt(thumbnail.dataset.index);
+                const mainImage = document.querySelector('.detail-image');
+                if (mainImage) {
+                    mainImage.src = fullImageSrc;
+                    mainImage.dataset.index = index;
+                    thumbnail.parentElement.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+                    thumbnail.classList.add('active');
+                }
+                return;
+            }
+
+            // Related card navigation
             const relatedCard = e.target.closest('.related-card[data-id]');
             if (relatedCard) {
                 e.preventDefault();
@@ -41,15 +58,17 @@ class NavigationManager {
                 }
 
                 this.showDetail(id, type);
+                return;
             }
 
             // Botón cerrar
             const closeBtn = e.target.closest('.close-detail');
             if (closeBtn) {
                 this.closeDetailView();
+                return;
             }
 
-            // Botón volver atrás (si existe)
+            // Botón volver atrás
             const backBtn = e.target.closest('.back-detail');
             if (backBtn && this.historyStack.length > 0) {
                 const previous = this.historyStack.pop();
@@ -67,13 +86,6 @@ class NavigationManager {
             btn.classList.add('active');
             this.currentCategory = btn.dataset.category;
             this.loadSectionContent(this.currentSection);
-        });
-
-        // Botón cerrar en vista de detalle
-        document.getElementById('detail-view')?.addEventListener('click', (e) => {
-            if (e.target.closest('.close-detail')) {
-                this.closeDetailView();
-            }
         });
     }
 
@@ -309,8 +321,23 @@ class NavigationManager {
         return relatedInfo;
     }
 
+    // Detecta image o images, string o array
+    getImagesArray(item) {
+        // Prioriza 'images' si existe
+        if (item.images) {
+            return Array.isArray(item.images) ? item.images : [item.images];
+        }
+        // Luego 'image'
+        if (item.image) {
+            return Array.isArray(item.image) ? item.image : [item.image];
+        }
+        // Fallback
+        return ['images/placeholder.jpg'];
+    }
+
     createCard(item, type) {
-        const imageUrl = item.image || 'images/placeholder.jpg';
+        const images = this.getImagesArray(item);
+        const mainImage = images[0];
         const name = item.name || 'Sin nombre';
         const category = item.category || 'Sin categoría';
         const description = item.shortDescription || (item.description ? item.description.substring(0, 100) + '...' : 'Sin descripción');
@@ -318,7 +345,7 @@ class NavigationManager {
         return `
             <div class="card" data-id="${item.id}" data-type="${type}">
                 <div class="card-image-container">
-                    <img src="${imageUrl}" alt="${name}" class="card-image" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                    <img src="${mainImage}" alt="${name}" class="card-image" loading="lazy" onerror="this.src='images/placeholder.jpg'">
                 </div>
                 <div class="card-content">
                     <span class="card-category">${category}</span>
@@ -329,8 +356,10 @@ class NavigationManager {
         `;
     }
 
+    // Galería
     createDetailView(item, type, relatedInfo) {
-        const imageUrl = item.image || 'images/placeholder.jpg';
+        const images = this.getImagesArray(item);
+        const mainImage = images[0];
         const name = item.name || 'Sin nombre';
         const category = item.category || 'Sin categoría';
         const description = item.description || 'Sin descripción';
@@ -338,6 +367,16 @@ class NavigationManager {
         const backButton = this.historyStack.length > 0
             ? `<button class="back-detail">◄</button>`
             : `<button class="back-detail" hidden></button>`;
+
+        // GALERÍA: Insertada DENTRO del contenedor de imagen
+        const galleryHTML = images.length > 1 ? `
+        <div class="image-thumbnails">
+            ${images.map((img, index) => `
+                <img src="${img}" alt="${name} ${index + 1}" class="thumbnail ${index === 0 ? 'active' : ''}" 
+                     data-index="${index}" data-full="${img}" loading="lazy" onerror="this.src='images/placeholder.jpg'; this.classList.add('broken')">
+            `).join('')}
+        </div>
+    ` : '';
 
         const statsHTML = item.stats && Object.keys(item.stats).length > 0
             ? `<div class="attributes">${Object.entries(item.stats).map(([key, value]) => `
@@ -372,10 +411,11 @@ class NavigationManager {
                 ${backButton}
                 <button class="close-detail" aria-label="Cerrar">✕</button>
             </div>
-            <div class="detail-content"> <!-- 🔥 NUEVO CONTENEDOR -->
+            <div class="detail-content">
                 <div class="detail-main">
                     <div class="detail-image-container">
-                        <img src="${imageUrl}" alt="${name}" class="detail-image" onerror="this.src='images/placeholder.jpg'">
+                        <img src="${mainImage}" alt="${name}" class="detail-image" data-index="0" onerror="this.src='images/placeholder.jpg'">
+                        ${galleryHTML} <!-- DENTRO del contenedor -->
                     </div>
                     <div class="detail-info">
                         <span class="detail-category">${category}</span>
@@ -392,12 +432,13 @@ class NavigationManager {
     }
 
     createRelatedCard(item, type) {
-        const imageUrl = item.image || 'images/placeholder.jpg';
+        const images = this.getImagesArray(item);
+        const mainImage = images[0];
         const name = item.name || 'Sin nombre';
 
         return `
             <div class="related-card" data-id="${item.id}" data-type="${type}">
-                <img src="${imageUrl}" alt="${name}" class="related-card-image" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                <img src="${mainImage}" alt="${name}" class="related-card-image" loading="lazy" onerror="this.src='images/placeholder.jpg'">
                 <div class="related-card-name">${name}</div>
             </div>
         `;
