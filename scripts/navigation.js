@@ -56,10 +56,21 @@ class NavigationManager {
                 e.preventDefault();
                 const fullImageSrc = thumbnail.dataset.full;
                 const index = parseInt(thumbnail.dataset.index);
+                const description = thumbnail.dataset.description;
+
                 const mainImage = document.querySelector('.detail-image');
+                const descElement = document.getElementById('image-description');
+
                 if (mainImage) {
                     mainImage.src = fullImageSrc;
                     mainImage.dataset.index = index;
+
+                    // Actualizar descripción
+                    if (descElement) {
+                        descElement.textContent = description || '';
+                        descElement.classList.toggle('hidden', !description);
+                    }
+
                     thumbnail.parentElement.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
                     thumbnail.classList.add('active');
                 }
@@ -375,35 +386,28 @@ class NavigationManager {
 
     // Retrocompatible image/images
     getImagesArray(item) {
-        // Prioriza 'images' si existe
-        if (item.images) return Array.isArray(item.images) ? item.images : [item.images];
-
-        // Luego 'image'
-        if (item.image) return Array.isArray(item.image) ? item.image : [item.image];
-
-        // Fallback
-        return ['images/placeholder.jpg'];
+        return dataLoader.normalizeImages(item.images || item.image);
     }
 
     createCard(item, type) {
         const images = this.getImagesArray(item);
-        const mainImage = images[0];
+        const mainImage = images[0].src;
         const name = item.name || 'Sin nombre';
         const category = item.category || 'Sin categoría';
         const description = item.shortDescription || (item.description ? item.description.substring(0, 100) + '...' : 'Sin descripción');
 
         return `
-            <div class="card" data-id="${item.id}" data-type="${type}">
-                <div class="card-image-container">
-                    <img src="${mainImage}" alt="${name}" class="card-image" loading="lazy" onerror="this.src='images/placeholder.jpg'">
-                </div>
-                <div class="card-content">
-                    <span class="card-category">${category}</span>
-                    <h3>${name}</h3>
-                    <p class="card-description">${description}</p>
-                </div>
+        <div class="card" data-id="${item.id}" data-type="${type}">
+            <div class="card-image-container">
+                <img src="${mainImage}" alt="${name}" class="card-image" loading="lazy" onerror="this.src='images/placeholder.jpg'">
             </div>
-        `;
+            <div class="card-content">
+                <span class="card-category">${category}</span>
+                <h3>${name}</h3>
+                <p class="card-description">${description}</p>
+            </div>
+        </div>
+    `;
     }
 
     // Galería
@@ -418,21 +422,26 @@ class NavigationManager {
             ? `<button class="back-detail">◄</button>`
             : `<button class="back-detail" hidden></button>`;
 
+        const imageDescriptionHTML = `
+        <div class="image-description ${mainImage.description ? '' : 'hidden'}" id="image-description">
+            ${mainImage.description || ''}
+        </div>
+        `;
+
         // GALERÍA: Insertada DENTRO del contenedor de imagen
         const galleryHTML = images.length > 1 ? `
-            <div class="image-thumbnails">
-                ${images.map((img, index) => `
-                    <img src="${img}" alt="${name} ${index + 1}" class="thumbnail ${index === 0 ? 'active' : ''}" 
-                         data-index="${index}" data-full="${img}" loading="lazy" onerror="this.src='images/placeholder.jpg'; this.classList.add('broken')">
-                `).join('')}
-            </div>
-        ` : '';
+        <div class="image-thumbnails">
+            ${images.map((img, index) => `
+                <img src="${img.src}" alt="${name} ${index + 1}" class="thumbnail ${index === 0 ? 'active' : ''}" 
+                     data-index="${index}" data-full="${img.src}" data-description="${img.description}" 
+                     loading="lazy" onerror="this.src='images/placeholder.jpg'; this.classList.add('broken')">
+            `).join('')}
+        </div>` : '';
 
         const statsHTML = item.stats && Object.keys(item.stats).length > 0
             ? `<div class="attributes">${Object.entries(item.stats).map(([key, value]) => `
                 <div class="attribute"><h4>${this.formatKey(key)}</h4><p>${value || 'N/A'}</p></div>
-            `).join('')}</div>`
-            : '';
+            `).join('')}</div>` : '';
 
         // SECCIÓN LIBROS para personajes/lugares/ítems
         const booksHTML = (type !== 'books' && relatedInfo.books?.length > 0) ? `
@@ -478,15 +487,16 @@ class NavigationManager {
                 <div class="detail-content">
                     <div class="detail-main">
                         <div class="detail-image-container">
-                            <img src="${mainImage}" alt="${name}" class="detail-image" data-index="0" onerror="this.src='images/placeholder.jpg'">
-                            ${galleryHTML} <!-- DENTRO del contenedor -->
+                            <img src="${mainImage.src}" alt="${name}" class="detail-image" data-index="0" onerror="this.src='images/placeholder.jpg'">
+                            ${galleryHTML}
+                            ${imageDescriptionHTML}
                         </div>
                         <div class="detail-info">
                             <span class="detail-category">${category}</span>
                             <h2>${name}</h2>
                             <div class="detail-description">${description}</div>
                             ${statsHTML}
-                        </div>
+                        </div>                        
                     </div>
                     ${relatedSections}
                     ${historyHTML}

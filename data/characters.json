@@ -3,12 +3,35 @@
     "id": 1,
     "name": "Hiro Goldsight",
     "category": "Híbrido Theryokin",
-    "image": [
-      "images/characters/hiro.jpg",
-      "images/characters/hiro2.jpg",
-      "images/characters/hiro3.jpg",
-      "images/characters/hiro4.jpg",
-      "images/characters/hiro5.jpg"
+    "images": [
+      {
+        "src": "images/characters/HIRO1.png",
+        "description": "Imagen 1"
+      },
+      {
+        "src": "images/characters/HIRO2.png",
+        "description": "Imagen 2"
+      },
+      {
+        "src": "images/characters/HIRO3.png",
+        "description": "Imagen 3"
+      },
+      {
+        "src": "images/characters/HIRO4.png",
+        "description": "Imagen 4"
+      },
+      {
+        "src": "images/characters/HIRO5.png",
+        "description": "Imagen 5"
+      },
+      {
+        "src": "images/characters/HIRO6.png",
+        "description": "Imagen 6"
+      },
+      {
+        "src": "images/characters/HIRO7.png",
+        "description": "Imagen 7"
+      }
     ],
     "shortDescription": "Valiente exploradora del desierto y descendiente Theryokin.",
     "description": "Hiro es una ex esclava Theryokin que liberó a su gente a través de la revolución y el activismo.",
@@ -39,7 +62,28 @@
     "id": 2,
     "name": "Gero Howks",
     "category": "Ex militar",
-    "image": "images/characters/gero.jpg",
+    "images": [
+      {
+        "src": "images/characters/Gero1.png",
+        "description": "Imagen 1"
+      },
+      {
+        "src": "images/characters/Gero2.png",
+        "description": "Imagen 2"
+      },
+      {
+        "src": "images/characters/Gero3.png",
+        "description": "Imagen 3"
+      },
+      {
+        "src": "images/characters/Gero4.png",
+        "description": "Imagen 4"
+      },
+      {
+        "src": "images/characters/Gero5.png",
+        "description": "Imagen 5"
+      }
+    ],
     "shortDescription": "Ex militar de Thoowlder",
     "description": "Con su pequeño escuadrón explorador, él ha liberado a los cinco pueblos del desierto.",
     "history": "Gero ha iniciado la revolución en Thoowlder, seguida de la liberación de los pueblos del monopolio de Nuberratio, y culminando con la salvación de los ciudadanos en La Ciudadela.",
@@ -65,7 +109,12 @@
     "id": 3,
     "name": "Elenk Ferrman Goldsight",
     "category": "Híbrido Theryokin",
-    "image": "images/characters/elenk.jpg",
+    "images": [
+      {
+        "src": "images/characters/elenk.jpg",
+        "description": ""
+      }
+    ],
     "shortDescription": "Ex esclavo armero del Rey",
     "description": "Elenk era un huérfano que se vendió al Rey para garantizar su supervivencia, fabricando armas destructivas para él.",
     "history": "Vivió como esclavo toda su infancia, conociendo a Hiro y formando una hermandad nacida de las carencias y los sueños. Está loco y es un apasionado por el fuego y las explosiones.",

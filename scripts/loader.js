@@ -1,42 +1,44 @@
 // INSTANCIA GLOBAL PRIMERO
 const dataLoader = new DataLoader();
+const uiConfig = {}; // Global para textos y colores
 
 // FUNCIÓN CONSTRUCTORA
 function DataLoader() {
-    this.data = {
-        characters: [],
-        locations: [],
-        items: [],
-        books: [],
-        categories: {}
-    };
+    this.data = {characters: [], locations: [], items: [], books: [], categories: {}};
     this.loaded = false;
 }
 
 // TODOS LOS MÉTODOS NECESARIOS
-
 DataLoader.prototype.loadAllData = async function () {
     try {
         console.log('📡 Cargando JSONs...');
-
-        const [characters, locations, items, books, categories] = await Promise.all([
+        const [characters, locations, items, books, categories, ui] = await Promise.all([
             fetch('data/characters.json').then(r => r.ok ? r.json() : []).catch(() => []),
             fetch('data/locations.json').then(r => r.ok ? r.json() : []).catch(() => []),
             fetch('data/items.json').then(r => r.ok ? r.json() : []).catch(() => []),
             fetch('data/books.json').then(r => r.ok ? r.json() : []).catch(() => []),
-            fetch('data/categories.json').then(r => r.ok ? r.json() : {}).catch(() => ({}))
+            fetch('data/categories.json').then(r => r.ok ? r.json() : {}).catch(() => ({})),
+            fetch('data/ui.json').then(r => r.ok ? r.json() : {}).catch(() => ({}))
         ]);
 
         this.data = {characters, locations, items, books, categories};
+        Object.assign(uiConfig, ui); // Cargar UI config
         this.loaded = true;
 
-        console.log('✅ Datos cargados:', {
+        // Aplicar colores personalizados
+        if (uiConfig.themeColors) {
+            const root = document.documentElement;
+            Object.entries(uiConfig.themeColors).forEach(([key, value]) => {
+                root.style.setProperty(`--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`, value);
+            });
+        }
+
+        console.log('✅ Datos cargados + UI config:', {
             personajes: characters.length,
             lugares: locations.length,
             objetos: items.length,
             libros: books.length
         });
-
         return true;
     } catch (error) {
         console.error('❌ Error cargando datos:', error);
@@ -44,17 +46,35 @@ DataLoader.prototype.loadAllData = async function () {
     }
 };
 
+// Método actualizado para usar labels de uiConfig
 DataLoader.prototype.updateStats = function () {
     const stats = document.getElementById('stats-display');
-    if (stats) {
+    if (stats && uiConfig.statsLabels) {
+        const labels = uiConfig.statsLabels;
         stats.innerHTML = `
-            <p>👥 Personajes: ${this.data.characters.length}</p>
-            <p>📍 Lugares: ${this.data.locations.length}</p>
-            <p>🎁 Objetos: ${this.data.items.length}</p>
-            <p>📚 Libros: ${this.data.books.length}</p>
-            <p>🏷️ Categorías: ${Object.keys(this.data.categories).length}</p>
+            <p>${labels.characters}: ${this.data.characters.length}</p>
+            <p>${labels.locations}: ${this.data.locations.length}</p>
+            <p>${labels.items}: ${this.data.items.length}</p>
+            <p>${labels.books}: ${this.data.books.length}</p>
+            <p>${labels.categories}: ${Object.keys(this.data.categories).length}</p>
         `;
     }
+};
+
+// NORMALIZA IMÁGENES: string → objeto con description
+DataLoader.prototype.normalizeImages = function (images) {
+    if (!images) return [{src: 'images/placeholder.jpg', description: ''}];
+    if (typeof images === 'string') return [{src: images, description: ''}];
+    if (Array.isArray(images)) {
+        return images.map(img => {
+            if (typeof img === 'string') return {src: img, description: ''};
+            return {
+                src: img.src || 'images/placeholder.jpg',
+                description: img.description || ''
+            };
+        });
+    }
+    return [{src: 'images/placeholder.jpg', description: ''}];
 };
 
 // MÉTODO DE BÚSQUEDA

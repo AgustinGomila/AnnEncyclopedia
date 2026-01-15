@@ -1,0 +1,84 @@
+{
+  "appName": "Mi Universo",
+  "appSubtitle": "Archivo de personajes, lugares, ítems y libros",
+  "footerText": "Creado con ❤️ | Actualizado: {date}",
+  "footerHint": "Para agregar contenido, edita los archivos JSON en la carpeta /data",
+  "searchPlaceholder": "Buscar personajes, lugares, ítems, libros...",
+  "searchButtonTitle": "Ejecutar búsqueda",
+  "clearButtonLabel": "✕",
+  "themeToggleTitle": "Cambiar tema",
+  "themeToggleIcons": {
+    "light": "🌙",
+    "dark": "☀️"
+  },
+  "backButtonText": "← Volver",
+  "closeButtonText": "✕",
+  "navLinks": [
+    {
+      "section": "characters",
+      "text": "👥 Personajes"
+    },
+    {
+      "section": "locations",
+      "text": "📍 Lugares"
+    },
+    {
+      "section": "items",
+      "text": "🎁 Objetos"
+    },
+    {
+      "section": "books",
+      "text": "📚 Libros"
+    },
+    {
+      "section": "about",
+      "text": "🟣 Acerca"
+    }
+  ],
+  "statsLabels": {
+    "loading": "Cargando datos...",
+    "characters": "👥 Personajes",
+    "locations": "📍 Lugares",
+    "items": "🎁 Objetos",
+    "books": "📚 Libros",
+    "categories": "🏷️ Categorías"
+  },
+  "categoryFiltersTitle": "Categorías",
+  "noResultsText": "No se encontró \"{query}\"",
+  "noContentText": "No hay contenido disponible para esta sección",
+  "aboutContent": {
+    "title": "📚 Acerca de este proyecto",
+    "description": "Este es un archivo personal para organizar y mostrar personajes, lugares, ítems y libros de tu universo creativo.",
+    "howToTitle": "¿Cómo agregar contenido?",
+    "howToSteps": [
+      "Edita los archivos JSON en la carpeta <code>/data</code>",
+      "Agrega imágenes a las carpetas correspondientes en <code>/images/</code>",
+      "Actualiza las referencias en los archivos JSON"
+    ],
+    "structureTitle": "Estructura de datos",
+    "structureItems": [
+      "<strong>characters.json</strong>: Personajes con sus historias y estadísticas",
+      "<strong>locations.json</strong>: Lugares del universo",
+      "<strong>items.json</strong>: Objetos y artefactos",
+      "<strong>books.json</strong>: Libros relacionados",
+      "<strong>categories.json</strong>: Sistema de categorías"
+    ]
+  },
+  "relatedTitles": {
+    "characters": "Personajes Relacionados",
+    "locations": "Lugares Relacionados",
+    "items": "Objetos Relacionados",
+    "books": "📚 Libros donde aparece"
+  },
+  "historyTitle": "Historia",
+  "themeColors": {
+    "primary": "#2c3e50",
+    "secondary": "#3498db",
+    "accent": "#e74c3c",
+    "light": "#ecf0f1",
+    "bgGradient": "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+    "shadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
+    "radius": "10px",
+    "transition": "0.3s ease"
+  }
+}

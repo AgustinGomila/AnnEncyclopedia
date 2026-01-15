@@ -47,7 +47,6 @@
 /* =========================================
    MÓVILES
    ========================================= */
-/* Responsive */
 @media (max-width: 768px) {
     .detail-main {
         grid-template-columns: 1fr;
@@ -55,6 +54,7 @@
 
     .detail-image-container {
         width: 100%;
+        margin: 0 auto;
     }
 
     .image-thumbnails {
