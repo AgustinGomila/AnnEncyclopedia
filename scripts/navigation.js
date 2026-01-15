@@ -399,7 +399,7 @@ class NavigationManager {
         return `
         <div class="card" data-id="${item.id}" data-type="${type}">
             <div class="card-image-container">
-                <img src="${mainImage}" alt="${name}" class="card-image" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                <img src="${mainImage}" alt="${name}" class="card-image" loading="lazy" onerror="this.src='${window.placeholder}'">
             </div>
             <div class="card-content">
                 <span class="card-category">${category}</span>
@@ -434,7 +434,7 @@ class NavigationManager {
             ${images.map((img, index) => `
                 <img src="${img.src}" alt="${name} ${index + 1}" class="thumbnail ${index === 0 ? 'active' : ''}" 
                      data-index="${index}" data-full="${img.src}" data-description="${img.description}" 
-                     loading="lazy" onerror="this.src='images/placeholder.jpg'; this.classList.add('broken')">
+                     loading="lazy" onerror="this.src='${window.placeholder}'; this.classList.add('broken')">
             `).join('')}
         </div>` : '';
 
@@ -487,7 +487,7 @@ class NavigationManager {
                 <div class="detail-content">
                     <div class="detail-main">
                         <div class="detail-image-container">
-                            <img src="${mainImage.src}" alt="${name}" class="detail-image" data-index="0" onerror="this.src='images/placeholder.jpg'">
+                            <img src="${mainImage.src}" alt="${name}" class="detail-image" data-index="0" onerror="this.src='${window.placeholder}'">
                             ${galleryHTML}
                             ${imageDescriptionHTML}
                         </div>
@@ -513,7 +513,7 @@ class NavigationManager {
 
         return `
             <div class="related-card" data-id="${item.id}" data-type="${type}">
-                <img src="${mainImage}" alt="${name}" class="related-card-image" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+                <img src="${mainImage}" alt="${name}" class="related-card-image" loading="lazy" onerror="this.src='${window.placeholder}'">
                 <div class="related-card-name">${name}</div>
             </div>
         `;

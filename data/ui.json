@@ -11,7 +11,7 @@
     "light": "🌙",
     "dark": "☀️"
   },
-  "backButtonText": "← Volver",
+  "backButtonText": "◄",
   "closeButtonText": "✕",
   "navLinks": [
     {
@@ -78,7 +78,11 @@
     "light": "#ecf0f1",
     "bgGradient": "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
     "shadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
+    "shadowHover": "0 10px 20px rgba(0, 0, 0, 0.2)",
     "radius": "10px",
-    "transition": "0.3s ease"
+    "transition": "0.3s ease",
+    "detailImageBg": "linear-gradient(135deg, rgba(245, 247, 250, 0.2) 0%, rgba(195, 207, 226, 0.2) 100%)",
+    "scrollbarThumb": "#3498db",
+    "scrollbarTrack": "transparent"
   }
 }

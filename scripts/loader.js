@@ -1,7 +1,7 @@
 // INSTANCIA GLOBAL PRIMERO
 const dataLoader = new DataLoader();
 const uiConfig = {}; // Global para textos y colores
-const placeholder = 'images/placeholder.jpg';
+window.placeholder = 'images/placeholder.jpg';
 
 // FUNCIÓN CONSTRUCTORA
 function DataLoader() {

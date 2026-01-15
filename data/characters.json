@@ -6,31 +6,31 @@
     "images": [
       {
         "src": "images/characters/HIRO1.png",
-        "description": "Imagen 1"
+        "description": "Joven desconocida, de aspecto extraño que apareció vulnerable en la entrada a la zona Prohibida del desierto.\n\nNo sabe leer, ni escribir, imita lo que otros dicen al hablar y sus gestos, como un espejo roto, no entiende lo que refleja. Fue llevada a la casa del Capitán Howks para ser custodiada e integrada al pueblo de Thoowlder."
       },
       {
         "src": "images/characters/HIRO2.png",
-        "description": "Imagen 2"
+        "description": "Ahora con fragmentos de su identidad, Hiro, mal apodada Goldsay, trabaja en la herrería Mérida del pueblo, y deslumbra a todos los hombres con su implacable fuerza y resistencia al fuego.\n\nPero también se convierte en el foco de una investigación policial, en la que seis mujeres similares a ella han muerto."
       },
       {
         "src": "images/characters/HIRO3.png",
-        "description": "Imagen 3"
+        "description": "Hiro Goldsay ha recuperado la mitad de sus recuerdos, dejándola en un estado emocionalmente inestable por el miedo de lo que significa recordar.\n\nAterrada quiere huir de su pasado, pero el asesino de mujeres dejó algo luego de su muerte, que aún señala a Hiro como alguien misteriosa."
       },
       {
         "src": "images/characters/HIRO4.png",
-        "description": "Imagen 4"
+        "description": "Hiro emprende viaje a los cuatro pueblos restantes disfrazada de payaso para armar una gira de circo, pero en secreto, es una táctica para deslizar mensajes de rebelión y alza en los espectadores.\n\nSiendo buscada por la milicia de Nuberratio, Hiro aviva una revolución para derrocar la ciudad y ser libre."
       },
       {
         "src": "images/characters/HIRO5.png",
-        "description": "Imagen 5"
+        "description": "Luego de años de tranquilidad y prosperidad en los cinco pueblos, libres del sometimiento a la ciudad, Hiro y su esposo Gero disfrutan viajando por el desierto para explorar y estudiar las aves.\n\nCon ropa confeccionada para el desierto, Hiro escava huecos y rompe huesos con sus guanteletes de acero."
       },
       {
         "src": "images/characters/HIRO6.png",
-        "description": "Imagen 6"
+        "description": "Con la piel quemada por el sol del desierto, y el cabello cubierto por canas del estrés, Hiro se convirtió en la viva imagen de su legado, una Goldsight original.\n\nVestida con ropa Pérsica, ella se ha unido al grupo rebelde de La Ciudadela para desmantelarla desde dentro, y así finalmente liberar a todo Egipto."
       },
       {
         "src": "images/characters/HIRO7.png",
-        "description": "Imagen 7"
+        "description": "Con armadura de plata traida por sus ancestros, Hiro se arma para la batalla final contra el Rey de La Ciudadela, Nero Nightveil, quien ha estado torturando a la sociedad y llevándola a la muerte como venganza.\n\nHiro finalmente está lista para enfrentarse a su linaje y el pasado que tantos años la persiguió desde las sombras de su mente."
       }
     ],
     "shortDescription": "Valiente exploradora del desierto y descendiente Theryokin.",
@@ -65,23 +65,23 @@
     "images": [
       {
         "src": "images/characters/Gero1.png",
-        "description": "Imagen 1"
+        "description": "Gero Howks es el hijo del Alcalde de Thoowlder, líder del único escuadrón militar y explorador autoproclamado.\n\nÉl ha sido veterano de la guerra local por la liberación de los usurpadores en Thoowlder, dejando marcas en su mente, heridas en su cuerpo y un ojo ciego.\n\nAgresivo y reservado, Gero busca la manera de expiar su verguenza y culpa por haber matado gente en la guerra."
       },
       {
         "src": "images/characters/Gero2.png",
-        "description": "Imagen 2"
+        "description": "Luego de haber cerrado el caso del asesino de mujeres, Gero se dedicó completamente a explorar el desierto, perdiendo el brazo en la primera misión donde llevó a Hiro.\n\nAunque los costos fueron permanentes, ella logró brindar información de sus memorias crucial para el avance de la exploración.\n\nSin ella, los pueblos permanecerían confinados, y Gero sabía que podía confiar en Hiro."
       },
       {
         "src": "images/characters/Gero3.png",
-        "description": "Imagen 3"
+        "description": "Gero y un grupo reducido de gente confiable emprendieron viaje, vestidos de payasos y líderes de circo, para esparcir un mensaje de revolución y rebeldía en los pueblos vecinos.\n\nLuego de cada espectáculo en la noche, Gero daría un discurso de aliento a los trabajadores y les desafiaría para que abran los ojos ante las injusticias a las que estaban sometidos.\n\nReina puede haber una, pero hormigas hay miles."
       },
       {
         "src": "images/characters/Gero4.png",
-        "description": "Imagen 4"
+        "description": "Con paz y prosperidad, Gero decidió abandonar la milicia y dedicarse a su pasión por estudiar las aves junto a su esposa Hiro, quien lo acompaña en cada expedición al desierto donde acampan meses.\n\nAhora con un guantelete de plata para evitar quemar a Hiro, ambos recorren las tierras que antes tanto los intimidaban."
       },
       {
         "src": "images/characters/Gero5.png",
-        "description": "Imagen 5"
+        "description": "Camuflado dentro de La Ciudadela, Gero se afeitó y quitó las canas, y se vistió de pérsico para pasar desapercibido en territorio enemigo.\n\nCon su escuadrón confiable, investigan esa ciudad amurallada que durante años los atormentó al enviar gente para matarlos.\n\nEn el proceso, descubrir su origen, razón de existencia y finalmente acabar con el Rey."
       }
     ],
     "shortDescription": "Ex militar de Thoowlder",
@@ -112,15 +112,15 @@
     "images": [
       {
         "src": "images/characters/Elenk1.png",
-        "description": ""
+        "description": "El mejor amigo de la infancia de Hiro llegó a Thoowlder y fue rápidamente adoptado por el herrero de la Herrería Mérida, aunque perdió una pierna para llegar allí, su inmenso ingenio y talento fue lo que le hizo sobrevivir.\n\nHiro le regaló una pata de metal, y él regresó el favor fabricando armas de fuego modernas y llevando Thoowlder a un mundo de máquinas y pistolas."
       },
       {
         "src": "images/characters/Elenk2.png",
-        "description": ""
+        "description": "Vestido de bufón, se desempeñó haciendo malabares y trucos de agilidad en el Maravilloso Circo de Oro, mientras que sus compañeros esparcían un mensaje revolucionario dentro de la carpa. Elenk se sintió como una atracción turística, y disfrutó de las miradas de asombro y la atención en exceso, pero más en particular, del fuego y las explosiones."
       },
       {
         "src": "images/characters/Elenk3.png",
-        "description": ""
+        "description": "De regreso a su ciudad natal, Elenk se vistió con ropas tradicionales de su pueblo, el Pueblo Pérsico. Aunque no ocultaban bien sus rasgos Theryokin, él añoró volver a sentirse parte del mundo en el que había nacido. El pueblo más conocido por amar y convivir con el fuego, la pirotecnia, las luces y lo caotico. Aunque su misión allí era rebelarse, se tomó la molestia de disfrutar más que destruir."
       }
     ],
     "shortDescription": "Ex esclavo armero del Rey",

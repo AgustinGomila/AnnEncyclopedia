@@ -2,6 +2,8 @@
 
 Un catálogo digital interactivo para organizar y explorar personajes, lugares e historias de tu mundo creativo.
 
+**[AnnDex →](https://agustingomila.github.io/AnnEncyclopedia/)**
+
 ## ✨ Características
 
 - **📱 Interfaz responsive** - Funciona en móviles, tablets y escritorio
