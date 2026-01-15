@@ -19,5 +19,9 @@
     "Pociones",
     "Libros",
     "Mapas"
+  ],
+  "books": [
+    "Fantasía Épica",
+    "Guía"
   ]
 }

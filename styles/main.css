@@ -609,6 +609,13 @@ main {
 }
 
 /* =========================================
+   SEPARACIÓN ESPECÍFICA LIBROS
+   ========================================= */
+.books-section h3 {
+    margin-bottom: 1.5rem;
+}
+
+/* =========================================
    PREVENT FOUT (Flash of Unstyled Content)
    ========================================= */
 /* SOLO para imágenes del grid */

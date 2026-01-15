@@ -53,9 +53,7 @@ class NavigationManager {
                 const type = relatedCard.dataset.type;
 
                 // Guardar el detalle actual en el historial
-                if (this.currentDetail) {
-                    this.historyStack.push({...this.currentDetail});
-                }
+                if (this.currentDetail) this.historyStack.push({...this.currentDetail});
 
                 this.showDetail(id, type);
                 return;
@@ -141,7 +139,8 @@ class NavigationManager {
         const allResults = [
             ...results.characters.map(c => ({...c, type: 'characters'})),
             ...results.locations.map(l => ({...l, type: 'locations'})),
-            ...results.items.map(i => ({...i, type: 'items'}))
+            ...results.items.map(i => ({...i, type: 'items'})),
+            ...results.books.map(b => ({...b, type: 'books'}))
         ];
 
         const grid = document.getElementById('content-grid');
@@ -172,20 +171,19 @@ class NavigationManager {
         grid.innerHTML = `
             <div class="about-content" style="grid-column: 1 / -1; padding: 2rem; background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                 <h2 style="color: var(--primary-color); margin-bottom: 1rem;">📚 Acerca de este proyecto</h2>
-                <p style="margin-bottom: 1.5rem; line-height: 1.6;">Este es un archivo personal para organizar y mostrar personajes, lugares e historias de tu universo creativo.</p>
-                
+                <p style="margin-bottom: 1.5rem; line-height: 1.6;">Este es un archivo personal para organizar y mostrar personajes, lugares, ítems y libros de tu universo creativo.</p>
                 <h3 style="color: var(--secondary-color); margin-top: 2rem;">¿Cómo agregar contenido?</h3>
                 <ol style="margin-left: 1.5rem; line-height: 2;">
                     <li>Edita los archivos JSON en la carpeta <code style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">/data</code></li>
                     <li>Agrega imágenes a las carpetas correspondientes en <code style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">/images/</code></li>
                     <li>Actualiza las referencias en los archivos JSON</li>
                 </ol>
-                
                 <h3 style="color: var(--secondary-color); margin-top: 2rem;">Estructura de datos</h3>
                 <ul style="margin-left: 1.5rem; line-height: 2;">
                     <li><strong>characters.json</strong>: Personajes con sus historias y estadísticas</li>
                     <li><strong>locations.json</strong>: Lugares del universo</li>
                     <li><strong>items.json</strong>: Objetos y artefactos</li>
+                    <li><strong>books.json</strong>: Libros relacionados</li>
                     <li><strong>categories.json</strong>: Sistema de categorías</li>
                 </ul>
             </div>
@@ -254,9 +252,7 @@ class NavigationManager {
 
     showNoContentMessage() {
         const grid = document.getElementById('content-grid');
-        if (grid) {
-            grid.innerHTML = '<div class="no-results">No hay contenido disponible para esta sección</div>';
-        }
+        if (grid) grid.innerHTML = '<div class="no-results">No hay contenido disponible para esta sección</div>';
     }
 
     renderGrid(items, type) {
@@ -297,40 +293,49 @@ class NavigationManager {
         const getters = {
             characters: () => dataLoader.getCharacter(id),
             locations: () => dataLoader.getLocation(id),
-            items: () => dataLoader.getItem(id)
+            items: () => dataLoader.getItem(id),
+            books: () => dataLoader.getBook(id)
         };
         return getters[type]?.() || null;
     }
 
+    // RELACIONES BIDIRECCIONALES Y LIBROS
     getRelatedInfo(item, type) {
-        const relatedInfo = {characters: [], locations: [], items: []};
+        const relatedInfo = {characters: [], locations: [], items: [], books: []};
+
         switch (type) {
             case 'characters':
                 relatedInfo.locations = (item.relatedLocations || []).map(id => dataLoader.getLocation(id)).filter(Boolean);
                 relatedInfo.items = (item.relatedItems || []).map(id => dataLoader.getItem(id)).filter(Boolean);
+                relatedInfo.books = dataLoader.getBooksByEntity('characters', item.id);
                 break;
             case 'locations':
                 relatedInfo.characters = dataLoader.getCharactersByLocation(item.id);
                 relatedInfo.items = dataLoader.getItemsByLocation(item.id);
+                relatedInfo.books = dataLoader.getBooksByEntity('locations', item.id);
                 break;
             case 'items':
                 relatedInfo.characters = dataLoader.getCharactersByItem(item.id);
                 relatedInfo.locations = dataLoader.getLocationsByItem(item.id);
+                relatedInfo.books = dataLoader.getBooksByEntity('items', item.id);
+                break;
+            case 'books': // Libros muestran sus entidades relacionadas
+                relatedInfo.characters = (item.relatedCharacters || []).map(id => dataLoader.getCharacter(id)).filter(Boolean);
+                relatedInfo.locations = (item.relatedLocations || []).map(id => dataLoader.getLocation(id)).filter(Boolean);
+                relatedInfo.items = (item.relatedItems || []).map(id => dataLoader.getItem(id)).filter(Boolean);
                 break;
         }
         return relatedInfo;
     }
 
-    // Detecta image o images, string o array
+    // Retrocompatible image/images
     getImagesArray(item) {
         // Prioriza 'images' si existe
-        if (item.images) {
-            return Array.isArray(item.images) ? item.images : [item.images];
-        }
+        if (item.images) return Array.isArray(item.images) ? item.images : [item.images];
+
         // Luego 'image'
-        if (item.image) {
-            return Array.isArray(item.image) ? item.image : [item.image];
-        }
+        if (item.image) return Array.isArray(item.image) ? item.image : [item.image];
+
         // Fallback
         return ['images/placeholder.jpg'];
     }
@@ -370,65 +375,80 @@ class NavigationManager {
 
         // GALERÍA: Insertada DENTRO del contenedor de imagen
         const galleryHTML = images.length > 1 ? `
-        <div class="image-thumbnails">
-            ${images.map((img, index) => `
-                <img src="${img}" alt="${name} ${index + 1}" class="thumbnail ${index === 0 ? 'active' : ''}" 
-                     data-index="${index}" data-full="${img}" loading="lazy" onerror="this.src='images/placeholder.jpg'; this.classList.add('broken')">
-            `).join('')}
-        </div>
-    ` : '';
+            <div class="image-thumbnails">
+                ${images.map((img, index) => `
+                    <img src="${img}" alt="${name} ${index + 1}" class="thumbnail ${index === 0 ? 'active' : ''}" 
+                         data-index="${index}" data-full="${img}" loading="lazy" onerror="this.src='images/placeholder.jpg'; this.classList.add('broken')">
+                `).join('')}
+            </div>
+        ` : '';
 
         const statsHTML = item.stats && Object.keys(item.stats).length > 0
             ? `<div class="attributes">${Object.entries(item.stats).map(([key, value]) => `
-            <div class="attribute"><h4>${this.formatKey(key)}</h4><p>${value || 'N/A'}</p></div>
-        `).join('')}</div>`
+                <div class="attribute"><h4>${this.formatKey(key)}</h4><p>${value || 'N/A'}</p></div>
+            `).join('')}</div>`
             : '';
 
+        // SECCIÓN LIBROS para personajes/lugares/ítems
+        const booksHTML = (type !== 'books' && relatedInfo.books?.length > 0) ? `
+            <div class="books-section">
+                <h3>📚 Libros donde aparece</h3>
+                <div class="related-grid">
+                    ${relatedInfo.books.map(book => this.createRelatedCard(book, 'books')).join('')}
+                </div>
+            </div>` : '';
+
+        // Relaciones (excluye libros de la lista general)
         const relatedSections = ['characters', 'locations', 'items']
             .filter(relType => relType !== type && relatedInfo[relType]?.length > 0)
             .map(relType => {
-                const titles = {characters: 'Personajes', locations: 'Lugares', items: 'Objetos'};
+                const titles = {
+                    characters: '👥 Personajes Relacionados',
+                    locations: '📍 Lugares Relacionados',
+                    items: '🎁 Objetos Relacionados'
+                };
                 return `
-                <div class="related-section">
-                    <h3>${titles[relType]} Relacionados</h3>
-                    <div class="related-grid">
-                        ${relatedInfo[relType].map(r => this.createRelatedCard(r, relType)).join('')}
+                    <div class="related-section">
+                        <h3>${titles[relType]}</h3>
+                        <div class="related-grid">
+                            ${relatedInfo[relType].map(r => this.createRelatedCard(r, relType)).join('')}
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
             })
             .join('');
 
         const historyHTML = item.history ? `
-        <div class="history-section">
-            <h3>Historia</h3>
-            <div class="history-content">${item.history}</div>
-        </div>` : '';
+            <div class="history-section">
+                <h3>Historia</h3>
+                <div class="history-content">${item.history}</div>
+            </div>` : '';
 
         return `
-        <div class="detail-header">
-            <div class="detail-actions">
-                ${backButton}
-                <button class="close-detail" aria-label="Cerrar">✕</button>
-            </div>
-            <div class="detail-content">
-                <div class="detail-main">
-                    <div class="detail-image-container">
-                        <img src="${mainImage}" alt="${name}" class="detail-image" data-index="0" onerror="this.src='images/placeholder.jpg'">
-                        ${galleryHTML} <!-- DENTRO del contenedor -->
-                    </div>
-                    <div class="detail-info">
-                        <span class="detail-category">${category}</span>
-                        <h2>${name}</h2>
-                        <div class="detail-description">${description}</div>
-                        ${statsHTML}
-                    </div>
+            <div class="detail-header">
+                <div class="detail-actions">
+                    ${backButton}
+                    <button class="close-detail" aria-label="Cerrar">✕</button>
                 </div>
-                ${relatedSections}
-                ${historyHTML}
+                <div class="detail-content">
+                    <div class="detail-main">
+                        <div class="detail-image-container">
+                            <img src="${mainImage}" alt="${name}" class="detail-image" data-index="0" onerror="this.src='images/placeholder.jpg'">
+                            ${galleryHTML} <!-- DENTRO del contenedor -->
+                        </div>
+                        <div class="detail-info">
+                            <span class="detail-category">${category}</span>
+                            <h2>${name}</h2>
+                            <div class="detail-description">${description}</div>
+                            ${statsHTML}
+                        </div>
+                    </div>
+                    ${relatedSections}
+                    ${historyHTML}
+                    ${booksHTML} <!-- Insertado al final -->
+                </div>
             </div>
-        </div>
-    `;
+        `;
     }
 
     createRelatedCard(item, type) {

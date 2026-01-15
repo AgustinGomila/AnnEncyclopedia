@@ -1,0 +1,36 @@
+[
+  {
+    "id": 1,
+    "name": "Crónicas del Reino Perdido",
+    "category": "Fantasía Épica",
+    "images": [
+      "images/books/cronicas.jpg"
+    ],
+    "description": "Libro que narra la caída del Reino de los Dragones...",
+    "history": "Escrito por el archimago Eldrin en el año 1024...",
+    "relatedCharacters": [
+      1,
+      3,
+      7
+    ],
+    "relatedLocations": [
+      2,
+      5
+    ],
+    "relatedItems": [
+      4
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Manual de Supervivencia",
+    "category": "Guía",
+    "image": "images/books/manual.jpg",
+    "description": "Guía completa para sobrevivir en la Zona Prohibida...",
+    "relatedItems": [
+      2,
+      3,
+      9
+    ]
+  }
+]
