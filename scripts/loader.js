@@ -1,6 +1,7 @@
 // INSTANCIA GLOBAL PRIMERO
 const dataLoader = new DataLoader();
 const uiConfig = {}; // Global para textos y colores
+const placeholder = 'images/placeholder.jpg';
 
 // FUNCIÓN CONSTRUCTORA
 function DataLoader() {
@@ -63,18 +64,18 @@ DataLoader.prototype.updateStats = function () {
 
 // NORMALIZA IMÁGENES: string → objeto con description
 DataLoader.prototype.normalizeImages = function (images) {
-    if (!images) return [{src: 'images/placeholder.jpg', description: ''}];
+    if (!images) return [{src: placeholder, description: ''}];
     if (typeof images === 'string') return [{src: images, description: ''}];
     if (Array.isArray(images)) {
         return images.map(img => {
             if (typeof img === 'string') return {src: img, description: ''};
             return {
-                src: img.src || 'images/placeholder.jpg',
+                src: img.src || placeholder,
                 description: img.description || ''
             };
         });
     }
-    return [{src: 'images/placeholder.jpg', description: ''}];
+    return [{src: placeholder, description: ''}];
 };
 
 // MÉTODO DE BÚSQUEDA
