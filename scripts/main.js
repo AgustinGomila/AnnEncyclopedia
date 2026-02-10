@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // INYECTAR TEXTOS DEL UI EN EL DOM
     injectUITexts();
 
-    navigation.switchSection('characters');
+    navigation.switchSection('books');
 
     // Service Worker
     if ('serviceWorker' in navigator) {

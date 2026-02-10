@@ -1,6 +1,6 @@
 class NavigationManager {
     constructor() {
-        this.currentSection = 'characters';
+        this.currentSection = 'books';
         this.currentCategory = 'all';
         this.currentDetail = null;
         this.pendingTimeouts = new Set();
@@ -364,6 +364,7 @@ class NavigationManager {
                 relatedInfo.locations = (item.relatedLocations || []).map(id => dataLoader.getLocation(id)).filter(Boolean);
                 relatedInfo.items = (item.relatedItems || []).map(id => dataLoader.getItem(id)).filter(Boolean);
                 relatedInfo.books = dataLoader.getBooksByEntity('characters', item.id);
+                relatedInfo.characters = dataLoader.getRelatedCharacters(item.id);
                 break;
             case 'locations':
                 relatedInfo.characters = dataLoader.getCharactersByLocation(item.id);
@@ -454,21 +455,24 @@ class NavigationManager {
 
         // Relaciones (excluye libros de la lista general)
         const relatedSections = ['characters', 'locations', 'items']
-            .filter(relType => relType !== type && relatedInfo[relType]?.length > 0)
+            .filter(relType => relType !== type || (relType === 'characters' && type === 'characters')) // Permitir characters en characters
+            .filter(relType => relatedInfo[relType]?.length > 0)
             .map(relType => {
                 const titles = {
-                    characters: '👥 Personajes Relacionados',
+                    characters: type === 'characters'
+                        ? '🎭 Alter-Egos / Otras Versiones'
+                        : '👥 Personajes Relacionados',
                     locations: '📍 Lugares Relacionados',
                     items: '🎁 Objetos Relacionados'
                 };
                 return `
-                    <div class="related-section">
-                        <h3>${titles[relType]}</h3>
-                        <div class="related-grid">
-                            ${relatedInfo[relType].map(r => this.createRelatedCard(r, relType)).join('')}
-                        </div>
-                    </div>
-                `;
+            <div class="related-section">
+                <h3>${titles[relType]}</h3>
+                <div class="related-grid">
+                    ${relatedInfo[relType].map(r => this.createRelatedCard(r, relType)).join('')}
+                </div>
+            </div>
+        `;
             })
             .join('');
 

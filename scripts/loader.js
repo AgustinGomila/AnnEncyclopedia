@@ -109,6 +109,15 @@ DataLoader.prototype.getCharacter = function (id) {
     return this.data.characters.find(c => c?.id === id);
 };
 
+DataLoader.prototype.getRelatedCharacters = function(characterId) {
+    const character = this.getCharacter(characterId);
+    if (!character || !character.relatedCharacters) return [];
+
+    return character.relatedCharacters
+        .map(id => this.getCharacter(id))
+        .filter(Boolean);
+};
+
 DataLoader.prototype.getLocation = function (id) {
     return this.data.locations.find(l => l?.id === id);
 };
